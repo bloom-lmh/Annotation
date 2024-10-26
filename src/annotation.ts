@@ -3,14 +3,21 @@
  */
 export class Annotation {
   /**
-   * 描述
+   * 生成注释
    */
-  private description: string = "this is a description";
 }
 
+/**
+ * 类注释类
+ */
+export class ClassAnnotation extends Annotation {
+  constructor() {
+    super();
+  }
+}
 /**
  * 方法注释类
  */
 export class MethodAnnotation extends Annotation {
-
+  constructor() { super(); }
 }

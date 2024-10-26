@@ -1,12 +1,17 @@
 import * as vscode from 'vscode';
+import { Parser } from './parser';
+import { Picker } from './picker';
 
 
 export function activate(context: vscode.ExtensionContext) {
 
-  const disposable = vscode.commands.registerCommand('demo.helloWorld', () => {
+  const disposable = vscode.commands.registerCommand('addAnnotation', () => {
+    let context = new Picker().pick();
+    new Parser().parse(context);
 
-    vscode.window.showInformationMessage("aa");
-    vscode.commands.executeCommand('editor.action.addCommentLine');
+
+
+    //vscode.commands.executeCommand('editor.action.addCommentLine');
 
   });
 

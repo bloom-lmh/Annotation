@@ -14,15 +14,15 @@
   "contributes": {
     "commands": [
       {
-        "command": "demo.helloWorld",
-        "title": "Hello World"
+        "command": "addAnnotation",
+        "title": "Add Annotation"
       }
     ],
     "keybindings": [
       {
-        "command": "extension.helloWorld",
-        "key": "alt+c",
-        "mac": "cmd+f1",
+        "command": "addAnnotation",
+        "key": "alt+\\",
+        "mac": "cmd+\\",
         "when": "editorTextFocus"
       }
     ]
