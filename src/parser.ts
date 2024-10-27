@@ -1,22 +1,39 @@
-import { ClassAnnotation, MethodAnnotation } from "./annotation";
-import { PickContext } from "./picker";
+import { readFileSync } from "fs";
 
+import ts from 'typescript'
 /**
- * 解析器
- * @description 用于解析文本建立文本与注释的映射
+ * TS文件解析器
  */
-export class Parser {
+export class TsParser {
+  /**
+   * 抽象语法树
+   */
+  private tsFileAST: ts.SourceFile | undefined
+
+
+  /**
+   * 解析typescript文件
+   * @returns 抽象语法树（AST）
+   */
+  public parse(fileName: string): TsParser {
+    //  同步读取文件
+    const fileContent = readFileSync(fileName, "utf-8")
+    // 解析文件内容生成抽象语法树
+    this.tsFileAST = ts.createSourceFile(fileName, fileContent, ts.ScriptTarget.Latest, true)
+    // 链式调用
+    return this
+  }
+
+
   /**
    * 方法匹配正则表达式
    */
-  private methodRegExp = /(?:public|private|protected|static|readonly|abstract)?\s*(?<methodName>\w+)\s*\([^)]*\)\s*:\s*(?<returnType>\w+)?\s*\{?/;
+  // private methodRegExp = /(?:public|private|protected|static|readonly|abstract)?\s*(?<methodName>\w+)\s*\([^)]*\)\s*:\s*(?<returnType>\w+)?\s*\{?/;
   /**
    * 类匹配正则表达式
    */
-  private classRegExp = /class\s+(?<className>[A-Z][a-zA-Z0-9]*)/;
-  /**
-   * 解析选中行生成注释对象
-   */
+  /* private classRegExp = /class\s+(?<className>[A-Z][a-zA-Z0-9]*)/;
+ 
   public parse(context: PickContext): MethodAnnotation | ClassAnnotation | undefined {
     // 获取拾取的行文本
     let lineText = context.getLineText();
@@ -38,5 +55,5 @@ export class Parser {
       // 否则映射为类注释对象
       return new ClassAnnotation();
     }
-  }
+  } */
 }

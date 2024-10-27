@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { Parser } from './parser';
 import { Picker } from './picker';
-
+import ts from 'typescript'
 
 export function activate(context: vscode.ExtensionContext) {
 
   const disposable = vscode.commands.registerCommand('addAnnotation', () => {
+
     let context = new Picker().pick();
     /*  if (context) {
        new Parser().parse(context);

@@ -21,3 +21,10 @@ export class ClassAnnotation extends Annotation {
 export class MethodAnnotation extends Annotation {
   constructor() { super(); }
 }
+
+/**
+ * 属性注释类
+ */
+export class AttributeAnnotation extends Annotation {
+  constructor() { super(); }
+}
