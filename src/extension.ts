@@ -7,7 +7,10 @@ export function activate(context: vscode.ExtensionContext) {
 
   const disposable = vscode.commands.registerCommand('addAnnotation', () => {
     let context = new Picker().pick();
-    new Parser().parse(context);
+    /*  if (context) {
+       new Parser().parse(context);
+     } */
+
 
 
 

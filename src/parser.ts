@@ -18,15 +18,22 @@ export class Parser {
    * 解析选中行生成注释对象
    */
   public parse(context: PickContext): MethodAnnotation | ClassAnnotation | undefined {
-    let { content } = context;
+    // 获取拾取的行文本
+    let lineText = context.getLineText();
     // 匹配结果
     let result: RegExpMatchArray | null;
+    // 方法名
+    // 返回值类型
+    // 参数与参数类型
+    // 类名
+    // 抛出的异常及其类型
     // 如果是方法映射为方法注释对象
-    if (result = content.match(this.methodRegExp)) {
+    if (result = lineText.match(this.methodRegExp)) {
       console.log(result);
+
       let methodAnnotation = new MethodAnnotation();
       return methodAnnotation;
-    } else if (result = content.match(this.classRegExp)) {
+    } else if (result = lineText.match(this.classRegExp)) {
       console.log(result);
       // 否则映射为类注释对象
       return new ClassAnnotation();
