@@ -29,8 +29,10 @@ export class Parser {
     // 获取所点击的单词
     const wordText = this.context.getWordText()
     // 查询单词所对应的属性、方法、类信息
-    ASTUtil.collectInfo(ASTUtil.createSourceFile(fileName))
+    ASTUtil.getMemberInfo(fileName)
     console.log(ASTUtil.classInfos);
+    /*  ASTUtil.collectInfo(ASTUtil.createSourceFile(fileName))
+     console.log(ASTUtil.classInfos); */
     // 链式调用
     return new MethodAnnotation()
   }

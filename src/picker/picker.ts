@@ -42,7 +42,6 @@ export class Picker {
     // 返回拾取上下文对象
     return pickContext;
   }
-
 }
 
 
