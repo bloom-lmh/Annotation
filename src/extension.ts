@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import { Picker } from './picker';
-import ts from 'typescript'
+import { Picker } from './picker/picker';
 
 export function activate(context: vscode.ExtensionContext) {
 
