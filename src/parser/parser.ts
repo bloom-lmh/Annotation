@@ -1,29 +1,37 @@
-import { readFileSync } from "fs";
 
-import ts from 'typescript'
+import { PickContext } from "../picker/pickcontext";
+import { Annotation, MethodAnnotation } from "../annotation/annotation";
+import { ASTUtil } from "../utils/ASTUtil";
 /**
  * TS文件解析器
  */
-export class TsParser {
+export class Parser {
   /**
-   * 抽象语法树
+   * 上下文对象
    */
-  private tsFileAST: ts.SourceFile | undefined
+  private context: PickContext
 
   /**
-   * 方法信息 
+   * 构造器
+   * @param context 上下文对象
    */
+  constructor(context: PickContext) {
+    this.context = context
+  }
 
   /**
-   * 解析typescript文件,并构建抽象语法树AST
+   * 创建解析注释对象
    * @returns 抽象语法树（AST）
    */
-  public buildAST(fileName: string): ts.SourceFile {
-    //  同步读取文件
-    const fileContent = readFileSync(fileName, "utf-8")
-    // 解析文件内容生成抽象语法树
-    const tsFileAST = ts.createSourceFile(fileName, fileContent, ts.ScriptTarget.Latest, true)
+  public parse(): Annotation {
+    // 获取文件路径，读取文件转化为抽象语法树
+    const fileName = this.context.getFileName()
+    // 获取所点击的单词
+    const wordText = this.context.getWordText()
+    // 查询单词所对应的属性、方法、类信息
+    ASTUtil.collectInfo(ASTUtil.createSourceFile(fileName))
+    console.log(ASTUtil.classInfos);
     // 链式调用
-    return tsFileAST
+    return new MethodAnnotation()
   }
 }

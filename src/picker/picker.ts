@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import ts from 'typescript'
-import { TsParser } from '../parser/parser';
 import { PickContext } from './pickcontext';
 
 /**
@@ -39,45 +38,12 @@ export class Picker {
     // 获取本行内容
     const lineText = document.lineAt(lineNumber).text;
     // 记录拾取信息
-    const pickContext = new PickContext(lineNumber, lineText,)
-    // 解析为AST抽象语法树
-    /*  const tsFileAST: ts.SourceFile = new TsParser().buildAST(fileName); */
-    // 遍历语法树获取类、方法、属性的信息
-    /*  visit(tsFileAST) */
-
-
+    const pickContext = new PickContext(editor, document, fileName, lineNumber, wordText)
     // 返回拾取上下文对象
-    return new PickContext(lineNumber, lineText);
+    return pickContext;
   }
 
 }
 
 
 
-/* function visit(node: ts.Node): void {
-  // 遍历类
-  if (ts.isClassDeclaration(node)) {
-
-    if (node.name) {
-      console.log(`Class name: ${node.name.getText()}`);
-    }
-
-    // 遍历类的成员  
-    node.members.forEach(member => {
-      // 收集方法信息
-      if (ts.isMethodDeclaration(member)) {
-        console.log(member.type?.getText());
-
-      }
-      // 收集属性信息
-      if (ts.isPropertyDeclaration(member)) {
-
-      }
-    });
-  }
-  // 你还可以添加对其他类型节点的处理，比如函数声明、接口等  
-
-  // 递归遍历子节点  
-  ts.forEachChild(node, visit);
-}  
- */
