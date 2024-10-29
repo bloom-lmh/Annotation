@@ -30,7 +30,7 @@ export class Parser {
     const wordText = this.context.getWordText()
     // 查询单词所对应的属性、方法、类信息
     ASTUtil.getMemberInfo(fileName)
-    console.log(ASTUtil.classInfos);
+    console.log(ASTUtil.memberInfos);
     /*  ASTUtil.collectInfo(ASTUtil.createSourceFile(fileName))
      console.log(ASTUtil.classInfos); */
     // 链式调用

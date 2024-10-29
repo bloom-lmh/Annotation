@@ -9,28 +9,32 @@ interface ClassInfo {
   properties: { name: string, type?: string }[];
 }
 interface MemberInfo {
-  classes: { name: string, isAbstract: boolean }[],
-  methods: { name: string, parameters: string[] }[];
-  properties: { name: string, type?: string }[];
+  classes: { className: string, isAbstract: boolean }[],
+  methods: { methodName: string, parameters: Map<string, string>[], returnType: string, throwError: string }[];
+  properties: { propertyName: string, propertyType?: string }[];
 }
 /**
  * 遍历AST树节点的类
  */
 export class ASTUtil {
   /**
-   * 类信息
-   */
-  public static classInfos: ClassInfo[] = [];
-  /**
    * 定义成员信息数组
    */
-  public static memberInfos: MemberInfo[] = []
+  public static memberInfos: MemberInfo = {
+    classes: [],
+    methods: [],
+    properties: []
+  }
   /**
    * 获取文件中包括方法、类、参数的成员信息
    * @param fileName 文件名
    */
   public static getMemberInfo(fileName: string) {
-    ASTUtil.classInfos = []
+    ASTUtil.memberInfos = {
+      classes: [],
+      methods: [],
+      properties: []
+    }
     //  同步读取文件
     const fileContent = readFileSync(fileName, "utf-8")
     // 解析文件内容生成抽象语法树
@@ -38,107 +42,63 @@ export class ASTUtil {
     // 收集节点信息
     ASTUtil.collectMemberInfo(tsFileAST)
   }
+  /**
+   * 收集成员信息
+   */
   public static collectMemberInfo(node: ts.Node): void {
     // 若节点是类声明
     if (ts.isClassDeclaration(node)) {
+      if (!node.name) return
       // 获取类名
-      const className = node.name?.getText();
+      const className = node.name.getText();
       // 是否抽象类
-      const isAbstract = node.modifiers && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.AbstractKeyword);
-      // 
-
-      /*  const classes: { name: string }[] = []
-       const methods: { name: string, parameters: string[] }[] = [];
-       const properties: { name: string, type?: string }[] = [];
-       // 遍历类中的方法
-       node.members.forEach(member => {
-         // 若是方法，get set访问器属性
-         if (ts.isMethodDeclaration(member) || ts.isGetAccessorDeclaration(member) || ts.isSetAccessorDeclaration(member)) {
-           // 获取方法名
-           const methodName = member.name.getText();
-           // 获取方法参数
-           const parameters = member.parameters.map(param => param.name.getText());
-           // 获取方法返回值类型
-           const type = member.type
-           // 收集方法信息
-           methods.push({ name: methodName, parameters });
-           // 若是属性
-         } else if (ts.isPropertyDeclaration(member)) {
-           const propertyName = member.name.getText();
-           let propertyType: string | undefined;
-           if (member.type) {
-             const typeChecker = ts.createProgram(['path/to/your/sourceFile.ts'], {}).getTypeChecker();
-             propertyType = typeChecker.typeToString(typeChecker.getTypeAtLocation(member.type));
-           }
-           properties.push({ name: propertyName, type: propertyType });
-         }
-       });
- 
-       ASTUtil.classInfos.push({ name: className, methods, properties }); */
+      const isAbstract = node.modifiers && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.AbstractKeyword) || false;
+      // 记录类信息
+      ASTUtil.memberInfos.classes.push({ className, isAbstract: isAbstract })
     }
     // 方法声明
     if (ts.isMethodDeclaration(node) || ts.isFunctionDeclaration(node) || ts.isArrowFunction(node) || ts.isConstructorDeclaration(node)) {
-      if (!node.name) {
-        return
+      // 方法名
+      const methodName = node.name?.getText() || 'undefined';
+      // 方法参数
+      const parameters = node.parameters.map(param => {
+        let key = param.name.getText()
+        let value = param.type?.getText() || ''
+        let paramMap = new Map<string, string>()
+        paramMap.set(key, value)
+        return paramMap
+      });
+      // 方法返回值类型
+      const returnType = node.type?.getText() || 'null'
+      // 方法抛出的异常
+      let throwError = ''
+      // 遍历方法体获取异常
+      const methodBody = node.body
+      if (methodBody) {
+        ts.forEachChild(methodBody, childNode => {
+          if (ts.isThrowStatement(childNode)) {
+            const thrownExpression = childNode.expression;
+            if (ts.isLiteralExpression(thrownExpression)) {
+              throwError = thrownExpression.getText()
+            } else if (ts.isNewExpression(thrownExpression)) {
+              throwError = thrownExpression.expression.getText()
+            }
+          }
+        });
       }
-      const methodName = node.name.getText();
-      console.log(methodName);
+      // 收集方法信息
+      ASTUtil.memberInfos.methods.push({ methodName, parameters, returnType, throwError })
     }
     // 属性声明
     if (ts.isPropertyDeclaration(node)) {
-      if (!node.name) {
-        return
-      }
+      // 属性名
       const propertyName = node.name.getText();
-      console.log(propertyName);
+      // 属性类型
+      const propertyType = node.type?.getText();
+      // 收集属性
+      ASTUtil.memberInfos.properties.push({ propertyName, propertyType });
     }
     // 递归遍历子节点  
     ts.forEachChild(node, ASTUtil.collectMemberInfo);
   }
-  /**
-   * 读取文件生成语法树
-   */
-  public static createSourceFile(fileName: string): ts.SourceFile {
-    //  同步读取文件
-    const fileContent = readFileSync(fileName, "utf-8")
-    // 解析文件内容生成抽象语法树
-    const tsFileAST: ts.SourceFile = ts.createSourceFile(fileName, fileContent, ts.ScriptTarget.Latest, true)
-    // 返回语法树
-    return tsFileAST
-  }
-
-  // 遍历 AST 的访问者函数  
-  public static collectInfo(node: ts.Node): void {
-    // 若节点是类声明
-    if (ts.isClassDeclaration(node)) {
-      if (!node.name) {
-        return
-      }
-      const className = node.name.getText();
-      const methods: { name: string, parameters: string[] }[] = [];
-      const properties: { name: string, type?: string }[] = [];
-
-      node.members.forEach(member => {
-        if (ts.isMethodDeclaration(member) || ts.isGetAccessorDeclaration(member) || ts.isSetAccessorDeclaration(member)) {
-          const methodName = member.name.getText();
-          const parameters = member.parameters.map(param => param.name.getText());
-          methods.push({ name: methodName, parameters });
-        } else if (ts.isPropertyDeclaration(member)) {
-          const propertyName = member.name.getText();
-          let propertyType: string | undefined;
-          if (member.type) {
-            const typeChecker = ts.createProgram(['path/to/your/sourceFile.ts'], {}).getTypeChecker();
-            propertyType = typeChecker.typeToString(typeChecker.getTypeAtLocation(member.type));
-          }
-          properties.push({ name: propertyName, type: propertyType });
-        }
-      });
-
-      ASTUtil.classInfos.push({ name: className, methods, properties });
-    }
-
-    // 递归遍历子节点  
-    ts.forEachChild(node, ASTUtil.collectInfo);
-  }
-
 }
