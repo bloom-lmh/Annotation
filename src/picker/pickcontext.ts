@@ -23,14 +23,13 @@ export class PickContext {
    * 文档对象
    */
   private document: vscode.TextDocument
-
   /**
    * 文件名
    */
   private fileName: string
   /**
-    * 行号
-    */
+   * 行号
+   */
   private lineNumber: number;
   /**
    * 选中单词
@@ -56,5 +55,8 @@ export class PickContext {
   }
   public getWordText(): string {
     return this.wordText
+  }
+  public getEditor(): vscode.TextEditor {
+    return this.editor
   }
 }
