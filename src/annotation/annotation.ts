@@ -49,12 +49,14 @@ export class ClassAnnotation extends Annotation {
     this.editor = context.getEditor()
   }
   public createAnnotation(): void {
+    const document = this.editor.document
     // 获取当前行的文本  
     this.editor.edit(editBuilder => {
       let positionAfterLine = new vscode.Position(this.startRow - 1, 0);
       editBuilder.insert(positionAfterLine, `\n/**
  * ${this.className}
  */\n`);
+      vscode.workspace.save(document.uri)
     }).then(success => {
       if (!success) {
         vscode.window.showErrorMessage('Failed to insert getter and setter methods.');
@@ -102,6 +104,7 @@ export class MethodAnnotation extends Annotation {
     this.editor = context.getEditor()
   }
   public createAnnotation(): void {
+    const document = this.editor.document
     // 获取当前行的文本  
     this.editor.edit(editBuilder => {
       let positionAfterLine = new vscode.Position(this.startRow - 1, 0);
@@ -111,6 +114,7 @@ export class MethodAnnotation extends Annotation {
  * @returns {${this.returnType}}
  * @throw {${this.throwError}}
  */\n`);
+      vscode.workspace.save(document.uri)
     }).then(success => {
       if (!success) {
         vscode.window.showErrorMessage('Failed to insert getter and setter methods.');
@@ -150,6 +154,7 @@ export class PropertyAnnotation extends Annotation {
     this.editor = context.getEditor()
   }
   public createAnnotation(): void {
+    const document = this.editor.document
     // 获取当前行的文本  
     this.editor.edit(editBuilder => {
       let positionAfterLine = new vscode.Position(this.startRow - 1, 0);
@@ -158,6 +163,7 @@ export class PropertyAnnotation extends Annotation {
  * ${this.propertyName}
  * @type {${this.propertyType}}
  */\n`);
+      vscode.workspace.save(document.uri)
     }).then(success => {
       if (!success) {
         vscode.window.showErrorMessage('Failed to insert getter and setter methods.');
