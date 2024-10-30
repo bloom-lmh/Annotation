@@ -2,27 +2,14 @@ import ts from "typescript";
 import { PickContext } from "../picker/pickcontext";
 import { ClassInfo, MethodInfo, PropertyInfo } from "../type";
 import * as vscode from 'vscode';
-/**
- * 注释类
- */
-export abstract class Annotation {
-  /**
-   * 名字
-   */
-  private name: string = ''
-  /**
-   * 生成注释
-   */
-  public createAnnotation() { };
-}
-
+import { ClassDeclaration, FunctionDeclaration, MethodDeclaration, Project, PropertyDeclaration, SourceFile } from "ts-morph";
 /**
  * 类注释类
  */
-export class ClassAnnotation extends Annotation {
+export class ClassAnnotation {
   /**
-   * 首行位置
-   */
+* 首行位置
+*/
   private startRow: number
   /** 
    * 类名
@@ -32,43 +19,31 @@ export class ClassAnnotation extends Annotation {
    * 是否抽象类
    */
   private isAbstract: boolean
-  /**
-   * 编辑器对象
-   */
-  private editor: vscode.TextEditor
+
   /**
    * 
    * @param className 类名
    * @param isAbstract 是否抽象类
    */
-  constructor(context: PickContext, member: ClassInfo) {
-    super();
-    this.startRow = member.startRow
-    this.className = member.name
-    this.isAbstract = member.isAbstract
-    this.editor = context.getEditor()
+  constructor(memberDeclaration: ClassDeclaration) {
+    this.startRow = memberDeclaration.getStartLineNumber()
+    this.className = memberDeclaration.getName() || ''
+    this.isAbstract = memberDeclaration.isAbstract()
   }
-  public createAnnotation(): void {
-    const document = this.editor.document
-    // 获取当前行的文本  
-    this.editor.edit(editBuilder => {
-      let positionAfterLine = new vscode.Position(this.startRow - 1, 0);
-      editBuilder.insert(positionAfterLine, `\n/**
- * ${this.className}
- */\n`);
-      vscode.workspace.save(document.uri)
-    }).then(success => {
-      if (!success) {
-        vscode.window.showErrorMessage('Failed to insert getter and setter methods.');
-      }
-    });
+  /**
+   * 创建注解
+   */
+  public createAnnotation(): string {
+    return `
+    ${this.className}
+   `
 
   }
 }
 /**
  * 方法注释类
  */
-export class MethodAnnotation extends Annotation {
+export class MethodAnnotation {
   /**
  * 首行位置
  */
@@ -95,7 +70,6 @@ export class MethodAnnotation extends Annotation {
   private editor: vscode.TextEditor
 
   constructor(context: PickContext, member: MethodInfo) {
-    super();
     this.startRow = member.startRow
     this.methodName = member.name
     this.parameters = member.parameters
@@ -126,7 +100,7 @@ export class MethodAnnotation extends Annotation {
 /**
  * 属性注释类
  */
-export class PropertyAnnotation extends Annotation {
+export class PropertyAnnotation {
   /**
    * 首行位置
    */
@@ -147,7 +121,6 @@ export class PropertyAnnotation extends Annotation {
   private propertyType: string
 
   constructor(context: PickContext, member: PropertyInfo) {
-    super();
     this.startRow = member.startRow
     this.propertyName = member.name
     this.propertyType = member.propertyType || ''
