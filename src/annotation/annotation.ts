@@ -3,6 +3,7 @@ import { PickContext } from "../picker/pickcontext";
 import { ClassInfo, MethodInfo, PropertyInfo } from "../type";
 import * as vscode from 'vscode';
 import { ClassDeclaration, FunctionDeclaration, MethodDeclaration, Project, PropertyDeclaration, SourceFile } from "ts-morph";
+import { TsFileParser } from "../parser/tsFileParser";
 /**
  * 类注释类
  */
@@ -63,37 +64,30 @@ export class MethodAnnotation {
   /**
    * 方法抛出的异常
    */
-  private throwError: string
+  private throwError: string | undefined
   /**
-     * 编辑器对象
-     */
-  private editor: vscode.TextEditor
+   * 
+   * @param memberDeclaration 方法声明
+   */
+  constructor(memberDeclaration: MethodDeclaration) {
+    this.startRow = memberDeclaration.getStartLineNumber()
+    this.methodName = memberDeclaration.getName()
+    this.parameters = TsFileParser.getMethodParameters(memberDeclaration)
+    this.returnType = memberDeclaration.getReturnType().getText()
 
-  constructor(context: PickContext, member: MethodInfo) {
-    this.startRow = member.startRow
-    this.methodName = member.name
-    this.parameters = member.parameters
-    this.returnType = member.returnType
-    this.throwError = member.throwError
-    this.editor = context.getEditor()
+    // this.throwError = memberDeclaration.getThro
   }
-  public createAnnotation(): void {
-    const document = this.editor.document
-    // 获取当前行的文本  
-    this.editor.edit(editBuilder => {
-      let positionAfterLine = new vscode.Position(this.startRow - 1, 0);
-      editBuilder.insert(positionAfterLine, `\n/**
- * 
- * ${this.methodName}
- * @returns {${this.returnType}}
- * @throw {${this.throwError}}
- */\n`);
-      vscode.workspace.save(document.uri)
-    }).then(success => {
-      if (!success) {
-        vscode.window.showErrorMessage('Failed to insert getter and setter methods.');
-      }
-    });
+  public createAnnotation(): string {
+    let paramStr = ''
+    for (const [paramName, paramType] of this.parameters) {
+      paramStr += `@param {${paramType}} - ${paramName}`
+      paramStr += '\n'
+    }
+    return `
+      ${this.methodName}
+      ${paramStr}
+      @returns {${this.returnType}}
+    `
   }
 }
 

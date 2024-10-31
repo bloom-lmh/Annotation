@@ -1,4 +1,4 @@
-import { ClassDeclaration, FunctionDeclaration, MethodDeclaration, Project, PropertyDeclaration, SourceFile } from "ts-morph";
+import { ClassDeclaration, FunctionDeclaration, MethodDeclaration, Project, ts, PropertyDeclaration, SourceFile } from "ts-morph";
 /**
  * ts文件解析器
  */
@@ -7,7 +7,7 @@ export class TsFileParser {
    * 将文件映射为AST
    * @param fileName ts或js文件路径
    */
-  public parse(fileName: string): SourceFile {
+  public static parse(fileName: string): SourceFile {
     // 创建一个新的项目实例  
     const project = new Project();
     // 打开或创建一个 TypeScript 文件  
@@ -18,7 +18,7 @@ export class TsFileParser {
   /**
    * 获取成员信息
    */
-  public getMemberInfoByName(sourceFile: SourceFile, memberName: string, lineNumber: number): ClassDeclaration | MethodDeclaration | PropertyDeclaration | FunctionDeclaration | null {
+  public static getMemberInfoByName(sourceFile: SourceFile, memberName: string, lineNumber: number): ClassDeclaration | MethodDeclaration | PropertyDeclaration | FunctionDeclaration | null {
     // 获取文件中的类
     for (const classMember of sourceFile.getClasses()) {
       // console.log(classMember.getName(), memberName, classMember.getStartLineNumber(), lineNumber);
@@ -46,5 +46,37 @@ export class TsFileParser {
       return functionMember
     }
     return null
+  }
+
+  /**
+   * 获取方法中的参数
+   */
+  public static getMethodParameters(methodDeclaration: MethodDeclaration): Map<string, string>[] {
+    return methodDeclaration.getParameters().map(param => {
+      return new Map().set(param.getName(), param.getType().getText())
+    })
+  }
+
+  /**
+   * 获取方法中的异常
+   */
+  public static getMethodThrows(methodDeclaration: MethodDeclaration) {
+    // 获取方法体的 AST 节点  
+    const methodBody = methodDeclaration.getStatements();
+    if (methodBody) {
+      methodBody.forEach(statement => {
+        /* if (ts.isThrowStatement(statement)) {
+          // 找到了 throw 语句  
+          console.log("Found throw statement:", statement.getText());
+
+          // 你可以进一步分析 throw 语句中的表达式  
+          const throwExpression = statement.getExpression();
+          if (ts.isNewExpression(throwExpression)) {
+            // 如果是 new Expression（例如 new Error(...)）  
+            console.log("Thrown object:", throwExpression.getText());
+          }
+        } */
+      });
+    }
   }
 }
