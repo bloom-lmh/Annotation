@@ -1,20 +1,35 @@
 
 import { ClassDeclaration, FunctionDeclaration, MethodDeclaration, PropertyDeclaration } from "ts-morph";
 import { TsFileParser } from "../parser/tsFileParser";
+import { doTranslate } from "../api/translateApi";
 /**
  * 抽象的注解
  */
 export abstract class Annotation {
+    /**
+* 首行位置
+*/
+    private startRow: number
+    /**
+     * 
+     * @param startRow 注释开始行
+     */
+    constructor(startRow: number) {
+        this.startRow = startRow
+    }
     public abstract createAnnotation(): string
+    /**
+     * 
+     * @returns 注释开始行
+     */
+    public getStartRow() {
+        return this.startRow
+    }
 }
 /**
  * 类注释类
  */
 export class ClassAnnotation extends Annotation {
-    /**
-  * 首行位置
-  */
-    private startRow: number
     /** 
      * 类名
     */
@@ -29,11 +44,10 @@ export class ClassAnnotation extends Annotation {
      * @param className 类名
      * @param isAbstract 是否抽象类
      */
-    constructor(memberDeclaration: ClassDeclaration) {
-        super()
-        this.startRow = memberDeclaration.getStartLineNumber()
-        this.className = memberDeclaration.getName() || ''
-        this.isAbstract = memberDeclaration.isAbstract()
+    constructor(startRow: number, className: string, isAbstract: boolean) {
+        super(startRow)
+        this.className = className
+        this.isAbstract = isAbstract
     }
     /**
      * 创建注解
@@ -46,10 +60,6 @@ export class ClassAnnotation extends Annotation {
  * 方法注释类
  */
 export class MethodAnnotation extends Annotation {
-    /**
-   * 首行位置
-   */
-    private startRow: number
     /**
      * 方法名
      */
@@ -70,13 +80,12 @@ export class MethodAnnotation extends Annotation {
      * 
      * @param memberDeclaration 方法声明
      */
-    constructor(memberDeclaration: MethodDeclaration | FunctionDeclaration) {
-        super()
-        this.startRow = memberDeclaration.getStartLineNumber()
-        this.methodName = memberDeclaration.getName() || ''
-        this.parameters = TsFileParser.getMethodParameters(memberDeclaration)
-        this.returnType = memberDeclaration.getReturnType().getText()
-        this.throwErrors = TsFileParser.getMethodThrows(memberDeclaration)
+    constructor(startRow: number, methodName: string, parameters: Map<string, string>, returnType: string, throwErrors: Array<string>) {
+        super(startRow)
+        this.methodName = methodName
+        this.parameters = parameters
+        this.returnType = returnType
+        this.throwErrors = throwErrors
     }
     public createAnnotation(): string {
         let paramStr = ''
@@ -98,10 +107,6 @@ export class MethodAnnotation extends Annotation {
  * 属性注释类
  */
 export class PropertyAnnotation extends Annotation {
-    /**
-     * 首行位置
-     */
-    private startRow: number
     /** 
      * 属性名
     */
@@ -115,11 +120,10 @@ export class PropertyAnnotation extends Annotation {
      * 
      * @param memberDeclaration 方法声明
      */
-    constructor(memberDeclaration: PropertyDeclaration) {
-        super()
-        this.startRow = memberDeclaration.getStartLineNumber()
-        this.propertyName = memberDeclaration.getName()
-        this.propertyType = memberDeclaration.getType().getText()
+    constructor(startRow: number, propertyName: string, propertyType: string) {
+        super(startRow)
+        this.propertyName = propertyName
+        this.propertyType = propertyType
     }
     public createAnnotation(): string {
         return `${this.propertyName}\n@type {${this.propertyType}}`

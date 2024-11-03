@@ -3,10 +3,11 @@ import { Picker } from './picker/picker';
 import { ClassDeclaration, FunctionDeclaration, JSDoc, MethodDeclaration, Project, PropertyDeclaration, ts } from "ts-morph";
 import { TsFileParser } from './parser/tsFileParser';
 import { ClassAnnotation, MethodAnnotation, PropertyAnnotation } from './annotation/annotation';
+import { doTranslate } from './api/translateApi';
 let m = new Map()
 export function activate(context: vscode.ExtensionContext) {
 
-    const disposable = vscode.commands.registerCommand('addAnnotation', () => {
+    const disposable = vscode.commands.registerCommand('addAnnotation', async () => {
         // 获取文本编辑器
         const editor = vscode.window.activeTextEditor;
         // 获取失败提示信息
@@ -21,16 +22,35 @@ export function activate(context: vscode.ExtensionContext) {
         // 获取单词对应的成员信息
         const memberDeclaration = TsFileParser.getMemberInfoByName(sourceFile, wordText, lineNumber);
         if (!memberDeclaration) return
+
+        // todo加载用户配置
+
+        // 翻译名字
+        const { data: name } = await doTranslate(wordText)
+        // todo文本处理工具来进行处理
+
+
         // 生成注解
         let jsdoc = ''
         if (memberDeclaration instanceof ClassDeclaration) {
-            jsdoc = new ClassAnnotation(memberDeclaration).createAnnotation()
+            const startRow = memberDeclaration.getStartLineNumber()
+            const className = memberDeclaration.getName() || ''
+            const isAbstract = memberDeclaration.isAbstract()
+            jsdoc = new ClassAnnotation(startRow, className, isAbstract).createAnnotation()
         }
         if (memberDeclaration instanceof MethodDeclaration || memberDeclaration instanceof FunctionDeclaration) {
-            jsdoc = new MethodAnnotation(memberDeclaration).createAnnotation()
+            const startRow = memberDeclaration.getStartLineNumber()
+            const methodName = memberDeclaration.getName() || ''
+            const parameters = TsFileParser.getMethodParameters(memberDeclaration)
+            const returnType = memberDeclaration.getReturnType().getText()
+            const throwErrors = TsFileParser.getMethodThrows(memberDeclaration)
+            jsdoc = new MethodAnnotation(startRow, methodName, parameters, returnType, throwErrors).createAnnotation()
         }
         if (memberDeclaration instanceof PropertyDeclaration) {
-            jsdoc = new PropertyAnnotation(memberDeclaration).createAnnotation()
+            const startRow = memberDeclaration.getStartLineNumber()
+            const propertyName = memberDeclaration.getName()
+            const propertyType = memberDeclaration.getType().getText()
+            jsdoc = new PropertyAnnotation(startRow, propertyName, propertyType).createAnnotation()
         }
         let a = memberDeclaration.addJsDoc(jsdoc)
 
