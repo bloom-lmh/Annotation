@@ -62,24 +62,20 @@ export class TsFileParser {
     /**
      * 获取方法中的异常
      */
-    public static getMethodThrows(methodDeclaration: MethodDeclaration | FunctionDeclaration) {
-        // 获取方法体的 AST 节点  
-        const methodBody = methodDeclaration.getStatements();
+    public static getMethodThrows(methodDeclaration: MethodDeclaration | FunctionDeclaration): Array<string> {
+        let throwRegExp = /\bthrow\s+new\s+(?<errorType>\w+)\s*\(\s*.*?\s*\)\s*;?/
+        const throws: Array<string> = []
+        // 方法声明
+        const methodBody = methodDeclaration.getBody();
         if (methodBody) {
-            methodBody.forEach(statement => {
-
-                /* if (ts.isThrowStatement(statement)) {
-                  // 找到了 throw 语句  
-                  console.log("Found throw statement:", statement.getText());
-        
-                  // 你可以进一步分析 throw 语句中的表达式  
-                  const throwExpression = statement.getExpression();
-                  if (ts.isNewExpression(throwExpression)) {
-                    // 如果是 new Expression（例如 new Error(...)）  
-                    console.log("Thrown object:", throwExpression.getText());
-                  }
-                } */
-            });
+            const throwStatements = methodBody.getDescendantsOfKind(ts.SyntaxKind.ThrowStatement);
+            throwStatements.forEach(statement => {
+                let res = statement.getText().match(throwRegExp)
+                if (res) {
+                    throws.push(res[1])
+                }
+            })
         }
+        return throws
     }
 }

@@ -15,10 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
         // 创建拾取器对象拾取光标所在单词和文件名以及行号
-        const picker = new Picker(editor)
-        const fileName = picker.pickFileName()
-        const wordText = picker.pickCursorWordText()
-        const lineNumber = picker.pickLineNumber()
+        const { fileName, wordText, lineNumber } = new Picker(editor).pick()
         // 解析ts文件为语法树
         const sourceFile = TsFileParser.parse(fileName)
         // 获取单词对应的成员信息
@@ -31,7 +28,6 @@ export function activate(context: vscode.ExtensionContext) {
         }
         if (memberDeclaration instanceof MethodDeclaration || memberDeclaration instanceof FunctionDeclaration) {
             jsdoc = new MethodAnnotation(memberDeclaration).createAnnotation()
-
         }
         if (memberDeclaration instanceof PropertyDeclaration) {
             jsdoc = new PropertyAnnotation(memberDeclaration).createAnnotation()
@@ -41,7 +37,6 @@ export function activate(context: vscode.ExtensionContext) {
 
         // 添加 JSDoc 注释  
         // 获取函数声明节点  
-
         // 添加 JSDoc 注释  
         /* const formatOptions: ts.FormatCodeSettings = {
           indentSize: 2,
