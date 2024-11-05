@@ -4,8 +4,16 @@ import { ClassDeclaration, FunctionDeclaration, JSDoc, MethodDeclaration, Projec
 import { TsFileParser } from './parser/tsFileParser';
 import { ClassAnnotation, MethodAnnotation, PropertyAnnotation } from './annotation/annotation';
 import { doTranslate } from './api/translateApi';
-let m = new Map()
+import { ConfigLoader } from './config/configloader';
 export function activate(context: vscode.ExtensionContext) {
+    //获取项目路径
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders) {
+        vscode.window.showErrorMessage('No workspace folder is open.');
+        return;
+    }
+    const projectPath = workspaceFolders[0].uri.fsPath;
+    // 读取项目下的配置文件
 
     const disposable = vscode.commands.registerCommand('addAnnotation', async () => {
         // 获取文本编辑器
@@ -17,6 +25,8 @@ export function activate(context: vscode.ExtensionContext) {
         }
         // 创建拾取器对象拾取光标所在单词和文件名以及行号
         const { fileName, wordText, lineNumber } = new Picker(editor).pick()
+
+
         // 解析ts文件为语法树
         const sourceFile = TsFileParser.parse(fileName)
         // 获取单词对应的成员信息
@@ -24,6 +34,9 @@ export function activate(context: vscode.ExtensionContext) {
         if (!memberDeclaration) return
 
         // todo加载用户配置
+        let config = ConfigLoader.loadConfig(projectPath)
+        console.log(config);
+
 
         // 翻译名字
         const { data: name } = await doTranslate(wordText)

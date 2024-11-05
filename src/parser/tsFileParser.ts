@@ -6,6 +6,7 @@ export class TsFileParser {
     /**
      * 将文件映射为AST
      * @param fileName ts或js文件路径
+     * @returns 解析后的文件
      */
     public static parse(fileName: string): SourceFile {
         // 创建一个新的项目实例  
@@ -17,6 +18,9 @@ export class TsFileParser {
     }
     /**
      * 获取成员信息
+     * @param sourceFile 解析后的源文件
+     * @param memberName 方法名、属性名、类名都可以
+     * @param lineNumber 方法、属性、类所在行
      */
     public static getMemberInfoByName(sourceFile: SourceFile, memberName: string, lineNumber: number): ClassDeclaration | MethodDeclaration | PropertyDeclaration | FunctionDeclaration | null {
         // 获取文件中的类

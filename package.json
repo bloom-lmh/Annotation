@@ -25,7 +25,41 @@
         "mac": "cmd+\\",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Your Extension Configuration",
+      "properties": {
+        "annotation.globalSetting": {
+          "author": "author name",
+          "email": "your email",
+          "tel": "your telephone",
+          "description": "the description about class method or property",
+          "date": "YYYY-MM-DD hh:mm:ss"
+        },
+        "annotation.classSetting": {
+          "author": "author name",
+          "email": "your email",
+          "tel": "your telephone",
+          "description": "the description about class method or property",
+          "date": "YYYY-MM-DD hh:mm:ss"
+        },
+        "annotation.methodSetting": {
+          "parameters": true,
+          "throwErrors": true,
+          "throwMerge": true,
+          "retureType": true,
+          "author": "author name",
+          "email": "your email",
+          "tel": "your telephone",
+          "description": "the description about class method or property",
+          "date": "YYYY-MM-DD hh:mm:ss"
+        },
+        "annotation.propertySetting": {
+          "propertyType": true
+        },
+        "annotation.wordMaps": {}
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

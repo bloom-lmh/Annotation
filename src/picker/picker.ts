@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import ts from 'typescript'
 
 /**
  * 内容拾取器
