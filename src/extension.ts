@@ -3,8 +3,8 @@ import { Picker } from './picker/picker';
 import { ClassDeclaration, FunctionDeclaration, JSDoc, MethodDeclaration, Project, PropertyDeclaration, ts } from "ts-morph";
 import { TsFileParser } from './parser/tsFileParser';
 import { ClassAnnotation, MethodAnnotation, PropertyAnnotation } from './annotation/annotation';
-import { doTranslate } from './api/translateApi';
 import { ConfigLoader } from './config/configloader';
+import { WordUtil } from './utils/wordutil';
 export function activate(context: vscode.ExtensionContext) {
     //获取项目路径
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -33,15 +33,11 @@ export function activate(context: vscode.ExtensionContext) {
         const memberDeclaration = TsFileParser.getMemberInfoByName(sourceFile, wordText, lineNumber);
         if (!memberDeclaration) return
 
-        // todo加载用户配置
-        let config = ConfigLoader.loadConfig(projectPath)
-        console.log(config);
+        // 加载用户配置
+        let { classConfig, globalConfig, methodConfig, propertyConfig, wordMaps } = ConfigLoader.loadConfig(projectPath)
 
-
-        // 翻译名字
-        const { data: name } = await doTranslate(wordText)
-        // todo文本处理工具来进行处理
-
+        // 文本处理工具来进行处理
+        let translationResult = await WordUtil.handleWord(wordText, wordMaps)
 
         // 生成注解
         let jsdoc = ''

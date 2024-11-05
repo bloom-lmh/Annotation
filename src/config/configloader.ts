@@ -1,3 +1,5 @@
+import { readFile, readFileSync } from 'fs';
+import path from 'path';
 import * as vscode from 'vscode';
 
 /* export function defineConfig(config: AnnotationConfig): AnnotationConfig {
@@ -16,12 +18,10 @@ export class ConfigLoader {
      * 加载配置
      */
     public static loadConfig(projectPath: string): AnnotationConfig {
-
         // 首先尝试加载用户配置
         const projectConfig = ConfigLoader.loadProjectConfig(projectPath)
         // 若用户本地配置不存在再加载vscode配置
         const vscodeConfig = ConfigLoader.loadVscodeConfig()
-
         // 返回合并后的配置
         return ConfigLoader.mergeConfig(vscodeConfig, projectConfig)
     }
@@ -47,15 +47,15 @@ export class ConfigLoader {
      * 加载用户配置
      */
     public static loadProjectConfig(projectPath: string): AnnotationConfig {
+        // 拼接文件路径
+        const filePath = path.join(projectPath, 'annotation.config.json')
         // 优先加载用户的ts配置文件
         // 加载用户的js配置文件
         // 加载用户json格式的配置文件
-        const vscodeConfig = vscode.workspace.getConfiguration("annotation")
-        const vscodeGlobalConfig: GlobalAnnotationConfig = vscodeConfig.get("globalSetting") || {}
-        const vscodeMethodConfig: MethodAnnotationConfig = vscodeConfig.get("methodSetting") || {}
-        const vscodeClassConfig: ClassAnnotationConfig = vscodeConfig.get("classSetting") || {}
-        const vscodePropertyConfig: PropertyAnnotationConfig = vscodeConfig.get("propertySetting") || {}
-        return { globalConfig: vscodeGlobalConfig, methodConfig: vscodeMethodConfig, classConfig: vscodeClassConfig, propertyConfig: vscodePropertyConfig }
+        let annotationConfig: AnnotationConfig;
+        const config = readFileSync(filePath)
+        annotationConfig = JSON.parse(config.toString())
+        return annotationConfig
     }
 
     /**
@@ -68,11 +68,11 @@ export class ConfigLoader {
         let propertyConfig: PropertyAnnotationConfig = {}
         let wordMaps: WordMaps = {}
         // 合并用户项目配置和vscode配置
-        Object.assign(globalConfig, vscodeConfig.globalConfig)
-        Object.assign(classConfig, vscodeConfig.classConfig)
-        Object.assign(methodConfig, vscodeConfig.methodConfig)
-        Object.assign(propertyConfig, vscodeConfig.propertyConfig)
-        Object.assign(wordMaps, vscodeConfig.wordMaps)
+        Object.assign(globalConfig, vscodeConfig.globalConfig, projectConfig.globalConfig)
+        Object.assign(classConfig, vscodeConfig.classConfig, projectConfig.classConfig)
+        Object.assign(methodConfig, vscodeConfig.methodConfig, projectConfig.methodConfig)
+        Object.assign(propertyConfig, vscodeConfig.propertyConfig, projectConfig.propertyConfig)
+        Object.assign(wordMaps, vscodeConfig.wordMaps, projectConfig.wordMaps)
         // 返回合并后的配置
         return { globalConfig, classConfig, methodConfig, propertyConfig, wordMaps }
     }

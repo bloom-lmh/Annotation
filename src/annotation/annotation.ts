@@ -1,7 +1,6 @@
 
 import { ClassDeclaration, FunctionDeclaration, MethodDeclaration, PropertyDeclaration } from "ts-morph";
 import { TsFileParser } from "../parser/tsFileParser";
-import { doTranslate } from "../api/translateApi";
 /**
  * 抽象的注解
  */
