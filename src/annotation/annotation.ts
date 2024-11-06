@@ -1,6 +1,3 @@
-
-import { ClassDeclaration, FunctionDeclaration, MethodDeclaration, PropertyDeclaration } from "ts-morph";
-import { TsFileParser } from "../parser/tsFileParser";
 /**
  * 抽象的注解
  */
@@ -16,6 +13,10 @@ export abstract class Annotation {
     constructor(startRow: number) {
         this.startRow = startRow
     }
+    /**
+  * 创建注解
+  * @returns jsdoc字符串
+  */
     public abstract createAnnotation(): string
     /**
      * 
@@ -49,8 +50,9 @@ export class ClassAnnotation extends Annotation {
         this.isAbstract = isAbstract
     }
     /**
-     * 创建注解
-     */
+   * 创建注解
+   * @returns jsdoc字符串
+   */
     public createAnnotation(): string {
         return `\n${this.className}`
     }
@@ -86,6 +88,10 @@ export class MethodAnnotation extends Annotation {
         this.returnType = returnType
         this.throwErrors = throwErrors
     }
+    /**
+     * 创建注解
+     * @returns jsdoc字符串
+     */
     public createAnnotation(): string {
         let paramStr = ''
         for (let [paramName, paramType] of this.parameters) {
@@ -108,7 +114,7 @@ export class MethodAnnotation extends Annotation {
 export class PropertyAnnotation extends Annotation {
     /** 
      * 属性名
-    */
+     */
     private propertyName: string
 
     /**
@@ -124,6 +130,10 @@ export class PropertyAnnotation extends Annotation {
         this.propertyName = propertyName
         this.propertyType = propertyType
     }
+    /**
+     * 创建注解
+     * @returns jsdoc字符串
+     */
     public createAnnotation(): string {
         return `${this.propertyName}\n@type {${this.propertyType}}`
     }

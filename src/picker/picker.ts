@@ -52,7 +52,7 @@ export class Picker {
     /**
      * 拾取并返回拾取信息上下文
      */
-    public pick() {
+    public pick(): PickContext {
         // 获取拾取的文件路径
         const fileName = this.pickFileName()
         // 获取光标所在单词的文本  
@@ -66,3 +66,17 @@ export class Picker {
 
 
 
+export interface PickContext {
+    /**
+     * 文件名
+     */
+    fileName: string
+    /**
+     * 行号
+     */
+    lineNumber: number;
+    /**
+     * 选中单词
+     */
+    wordText: string
+}

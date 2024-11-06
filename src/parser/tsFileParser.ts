@@ -25,20 +25,19 @@ export class TsFileParser {
     public static getMemberInfoByName(sourceFile: SourceFile, memberName: string, lineNumber: number): ClassDeclaration | MethodDeclaration | PropertyDeclaration | FunctionDeclaration | null {
         // 获取文件中的类
         for (const classMember of sourceFile.getClasses()) {
-            // console.log(classMember.getName(), memberName, classMember.getStartLineNumber(), lineNumber);
             // 若类满足条件返回类
             if (classMember.getName() === memberName && classMember.getStartLineNumber() === lineNumber) {
                 return classMember
             }
+            // 遍历类中的方法，若方法满足条件返回方法
             for (const methodMember of classMember.getMethods()) {
                 if (methodMember.getName() === memberName && methodMember.getStartLineNumber() === lineNumber) {
-                    //console.log(methodMember.getName());
                     return methodMember
                 }
             }
+            // 遍历类中的属性，若属性满足条件返回属性
             for (const propertyMember of classMember.getProperties()) {
                 if (propertyMember.getName() === memberName && propertyMember.getStartLineNumber() === lineNumber) {
-                    // console.log(propertyMember.getName());
                     return propertyMember
                 }
             }
@@ -46,7 +45,6 @@ export class TsFileParser {
         // 获取文件中方法
         let functionMember = sourceFile.getFunctions().find(functionMember => functionMember.getName() === memberName && functionMember.getStartLineNumber() === lineNumber)
         if (functionMember) {
-            // console.log(functionMember.getName());
             return functionMember
         }
         return null

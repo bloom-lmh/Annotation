@@ -1,4 +1,4 @@
-import { readFile, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import path from 'path';
 import * as vscode from 'vscode';
 
@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
     return config
 } */
 
-export class ConfigLoader {
+export class ConfigManager {
     /**
      * 定义配置
      */
@@ -19,11 +19,11 @@ export class ConfigLoader {
      */
     public static loadConfig(projectPath: string): AnnotationConfig {
         // 首先尝试加载用户配置
-        const projectConfig = ConfigLoader.loadProjectConfig(projectPath)
+        const projectConfig = ConfigManager.loadProjectConfig(projectPath)
         // 若用户本地配置不存在再加载vscode配置
-        const vscodeConfig = ConfigLoader.loadVscodeConfig()
+        const vscodeConfig = ConfigManager.loadVscodeConfig()
         // 返回合并后的配置
-        return ConfigLoader.mergeConfig(vscodeConfig, projectConfig)
+        return ConfigManager.mergeConfig(vscodeConfig, projectConfig)
     }
     /**
      * 加载vscode配置
@@ -94,7 +94,7 @@ export interface GlobalAnnotationConfig {
     // 用户个性化注解
 }
 export interface ClassAnnotationConfig extends GlobalAnnotationConfig {
-    /* className?: (className: string) => string */
+    className?: (className: string) => string
 }
 export interface MethodAnnotationConfig extends GlobalAnnotationConfig {
     // 参数 可以不开启也可以用户自己指定
