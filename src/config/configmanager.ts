@@ -10,9 +10,9 @@ export class ConfigManager {
     /**
      * 定义配置
      */
-    /* public static defineConfig(config: AnnotationConfig) {
+    public static defineConfig(config: AnnotationConfig) {
         return config
-    } */
+    }
 
     /**
      * 加载配置
@@ -91,7 +91,6 @@ export interface GlobalAnnotationConfig {
     date?: boolean,
     // 是否加上日期时间
     dateTime?: boolean,
-    // 用户个性化注解
 }
 export interface ClassAnnotationConfig extends GlobalAnnotationConfig {
     className?: (className: string) => string
