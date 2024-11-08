@@ -25,6 +25,11 @@ export function activate(context: vscode.ExtensionContext) {
         const { fileName, wordText, lineNumber } = new Picker(editor).pick()
         // 解析ts文件为语法树
         const sourceFile = TsFileParser.parse(fileName)
+        // 获文件解析失败提示信息
+        if (!sourceFile) {
+            vscode.window.showErrorMessage("文件解析失败！");
+            return;
+        }
         // 获取单词对应的成员信息
         const memberDeclaration = TsFileParser.getMemberInfoByName(sourceFile, wordText, lineNumber);
         // 获取成员失败提示信息
@@ -32,9 +37,9 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage("获取成员信息失败！");
             return;
         }
-
         // 加载用户配置
         let annotationConfig = ConfigManager.loadConfig(projectPath)
+        console.log(annotationConfig);
         // 获取用户配置失败提示信息
         if (!annotationConfig) {
             vscode.window.showErrorMessage("获取用户配置失败！");

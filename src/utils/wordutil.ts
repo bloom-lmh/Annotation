@@ -1,5 +1,5 @@
 import { getTranslation } from "../api/translateApi";
-import { WordMaps } from "../config/configmanager";
+import { WordMaps } from "../config/configtype";
 
 /**
  * 文本处理工具

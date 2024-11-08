@@ -1,12 +1,17 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 import * as vscode from 'vscode';
+import { AnnotationConfig, ClassAnnotationConfig, GlobalAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig, WordMaps } from './configtype';
 
 /* export function defineConfig(config: AnnotationConfig): AnnotationConfig {
     return config
 } */
 
 export class ConfigManager {
+    /**
+     * 全局配置
+     */
+    public static globalConfig: GlobalAnnotationConfig
     /**
      * 定义配置
      */
@@ -22,8 +27,12 @@ export class ConfigManager {
         const projectConfig = ConfigManager.loadProjectConfig(projectPath)
         // 若用户本地配置不存在再加载vscode配置
         const vscodeConfig = ConfigManager.loadVscodeConfig()
+        // 合并配置
+        let annotationConfig: AnnotationConfig = ConfigManager.mergeConfig(vscodeConfig, projectConfig)
+        // 记录全局配置
+        ConfigManager.globalConfig = annotationConfig.globalConfig || {}
         // 返回合并后的配置
-        return ConfigManager.mergeConfig(vscodeConfig, projectConfig)
+        return annotationConfig
     }
     /**
      * 加载vscode配置
@@ -73,55 +82,8 @@ export class ConfigManager {
         Object.assign(methodConfig, vscodeConfig.methodConfig, projectConfig.methodConfig)
         Object.assign(propertyConfig, vscodeConfig.propertyConfig, projectConfig.propertyConfig)
         Object.assign(wordMaps, vscodeConfig.wordMaps, projectConfig.wordMaps)
+
         // 返回合并后的配置
         return { globalConfig, classConfig, methodConfig, propertyConfig, wordMaps }
     }
-}
-
-export interface GlobalAnnotationConfig {
-    // 是否加上作者,填写作者名
-    author?: string | null,
-    // 是否加上邮箱
-    email?: string | null,
-    // 是否加上电话
-    tel?: string | null,
-    // 是否加上描述
-    description?: string | null
-    // 是否加上时间
-    date?: boolean,
-    // 是否加上日期时间
-    dateTime?: boolean,
-}
-export interface ClassAnnotationConfig extends GlobalAnnotationConfig {
-    className?: (className: string) => string
-}
-export interface MethodAnnotationConfig extends GlobalAnnotationConfig {
-    // 参数 可以不开启也可以用户自己指定
-    parameters?: boolean | ((parameters: Map<string, string>) => string)
-    // 返回值
-    returnType?: boolean,
-    // 抛出异常
-    throwErrors?: boolean | ((throwErrors: Array<string>) => string)
-    // 相同异常类型是否合并
-    throwMerge?: boolean
-}
-export interface PropertyAnnotationConfig extends GlobalAnnotationConfig {
-    // 类型是否开启
-    propertyType?: boolean
-}
-// 单词映射
-export interface WordMaps {
-    [key: string]: string
-}
-export interface AnnotationConfig {
-    // 全局配置
-    globalConfig?: GlobalAnnotationConfig
-    // 类配置
-    classConfig?: ClassAnnotationConfig,
-    // 方法注解配置
-    methodConfig?: MethodAnnotationConfig,
-    // 属性配置
-    propertyConfig?: PropertyAnnotationConfig
-    // 单词映射
-    wordMaps?: WordMaps
 }

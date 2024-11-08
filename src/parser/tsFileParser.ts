@@ -64,9 +64,9 @@ export class TsFileParser {
     /**
      * 获取方法中的异常
      */
-    public static getMethodThrows(methodDeclaration: MethodDeclaration | FunctionDeclaration): Array<string> {
+    public static getMethodThrows(methodDeclaration: MethodDeclaration | FunctionDeclaration): Set<string> {
         let throwRegExp = /\bthrow\s+new\s+(?<errorType>\w+)\s*\(\s*.*?\s*\)\s*;?/
-        const throws: Array<string> = []
+        const throws: Set<string> = new Set()
         // 方法声明
         const methodBody = methodDeclaration.getBody();
         if (methodBody) {
@@ -74,7 +74,7 @@ export class TsFileParser {
             throwStatements.forEach(statement => {
                 let res = statement.getText().match(throwRegExp)
                 if (res) {
-                    throws.push(res[1])
+                    throws.add(res[1])
                 }
             })
         }

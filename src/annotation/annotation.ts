@@ -1,3 +1,6 @@
+import { ClassAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig } from "../config/configtype"
+import { AnnotationDecorator } from "./annotationdecorator"
+
 /**
  * 抽象的注解
  */
@@ -38,23 +41,39 @@ export class ClassAnnotation extends Annotation {
      * 是否抽象类
      */
     private isAbstract: boolean
+    /**
+     * 类配置
+     */
+    private classConfig: ClassAnnotationConfig
 
     /**
      * 
      * @param className 类名
      * @param isAbstract 是否抽象类
      */
-    constructor(startRow: number, className: string, isAbstract: boolean) {
+    constructor(startRow: number, className: string, isAbstract: boolean, classConfig: ClassAnnotationConfig) {
         super(startRow)
         this.className = className
         this.isAbstract = isAbstract
+        this.classConfig = classConfig
     }
     /**
-   * 创建注解
+   * 创建类注解
    * @returns jsdoc字符串
    */
     public createAnnotation(): string {
-        return `\n${this.className}`
+
+        // 获取类配置
+        let { partialExtend } = this.classConfig
+        // jsdoc字符串
+        let jsdocStr = ''
+        // 类名
+        jsdocStr += `\n${this.className}类`
+        // 装饰字符串
+        if (partialExtend) {
+            jsdocStr = AnnotationDecorator.decorateAnnotation(jsdocStr, partialExtend)
+        }
+        return jsdocStr
     }
 }
 /**
@@ -76,35 +95,69 @@ export class MethodAnnotation extends Annotation {
     /**
      * 方法抛出的异常
      */
-    private throwErrors: Array<string>
+    private throwErrors: Set<string>
+    /**
+     * 类配置
+     */
+    private methodConfig: MethodAnnotationConfig
+
     /**
      * 
      * @param memberDeclaration 方法声明
      */
-    constructor(startRow: number, methodName: string, parameters: Map<string, string>, returnType: string, throwErrors: Array<string>) {
+    constructor(startRow: number, methodName: string, parameters: Map<string, string>, returnType: string, throwErrors: Set<string>, methodConfig: MethodAnnotationConfig) {
         super(startRow)
         this.methodName = methodName
         this.parameters = parameters
         this.returnType = returnType
         this.throwErrors = throwErrors
+        this.methodConfig = methodConfig
     }
     /**
      * 创建注解
      * @returns jsdoc字符串
      */
     public createAnnotation(): string {
+        // 获取方法注解配置
+        let { parameters, throwErrors, returnType, partialExtend } = this.methodConfig
+        // jsdoc字符串
+        let jsdocStr = ''
         let paramStr = ''
-        for (let [paramName, paramType] of this.parameters) {
-            paramStr += `@param {${paramType}} ${paramName}\n`
-        }
         let throwStr = ''
-        for (let i = 0; i < this.throwErrors.length; i++) {
-            throwStr += `@throws {${this.throwErrors[i]}}`
-            if (i < this.throwErrors.length - 1) {
-                throwStr += '\n'
+        // 添加方法名
+        jsdocStr += `\n${this.methodName}`
+        // 开启参数
+        if (parameters && this.parameters.size > 0) {
+            jsdocStr += '\n'
+            let index = 0
+            for (let [paramName, paramType] of this.parameters) {
+                paramStr += `@param {${paramType}} ${paramName}`
+                if (index++ != this.parameters.size - 1) {
+                    paramStr += '\n'
+                }
             }
+            jsdocStr += paramStr
         }
-        return `${this.methodName}\n${paramStr}@returns {${this.returnType}}\n${throwStr}`
+        // 返回值
+        if (returnType && this.returnType) {
+            jsdocStr += `\n@returns {${this.returnType}}`
+        }
+        // 异常
+        if (throwErrors && this.throwErrors.size > 0) {
+            let index = 0
+            jsdocStr += '\n'
+            for (const throwError of this.throwErrors) {
+                throwStr += `@throws {${throwError}}`
+                if (index++ != this.throwErrors.size - 1) {
+                    paramStr += '\n'
+                }
+            }
+            jsdocStr += throwStr
+        }
+        if (partialExtend) {
+            jsdocStr = AnnotationDecorator.decorateAnnotation(jsdocStr, partialExtend)
+        }
+        return jsdocStr
     }
 }
 
@@ -121,20 +174,38 @@ export class PropertyAnnotation extends Annotation {
      * 属性类型
      */
     private propertyType: string
+
+    /**
+     * 属性注解配置
+     */
+    private propertyConfig: PropertyAnnotationConfig
+
     /**
      * 
      * @param memberDeclaration 方法声明
      */
-    constructor(startRow: number, propertyName: string, propertyType: string) {
+    constructor(startRow: number, propertyName: string, propertyType: string, propertyConfig: PropertyAnnotationConfig) {
         super(startRow)
         this.propertyName = propertyName
         this.propertyType = propertyType
+        this.propertyConfig = propertyConfig
     }
     /**
      * 创建注解
      * @returns jsdoc字符串
      */
     public createAnnotation(): string {
-        return `${this.propertyName}\n@type {${this.propertyType}}`
+        let jsdocStr = ''
+        // 根据配置来进行生成
+        let { propertyType, partialExtend } = this.propertyConfig
+        jsdocStr += `\n${this.propertyName}`
+        // 开启类型
+        if (propertyType) {
+            jsdocStr += `\n@type {${this.propertyType}}`
+        }
+        if (partialExtend) {
+            jsdocStr = AnnotationDecorator.decorateAnnotation(jsdocStr, partialExtend)
+        }
+        return jsdocStr
     }
 }
