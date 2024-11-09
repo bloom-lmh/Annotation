@@ -46,10 +46,18 @@ export interface PropertyAnnotationConfig extends BaseAnnotation {
     // 类型是否开启
     propertyType?: boolean
 }
-// 单词映射
-export interface WordMaps {
-    [key: string]: string
+
+/**
+ * 翻译配置
+ */
+export interface TranslationConfig {
+    apiKey?: string | Array<string>,
+    open?: boolean,
+    wordMaps?: {
+        [key: string]: string
+    }
 }
+
 /**
  * 注解
  */
@@ -63,5 +71,5 @@ export interface AnnotationConfig {
     // 属性配置
     propertyConfig?: PropertyAnnotationConfig
     // 单词映射
-    wordMaps?: WordMaps
+    translationConfig?: TranslationConfig
 }

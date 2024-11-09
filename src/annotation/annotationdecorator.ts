@@ -26,7 +26,7 @@ export class AnnotationDecorator {
         }
         // 添加版本
         if (version && partialExtend.includes('version')) {
-            extendJsdocStr += version
+            extendJsdocStr += `\n@version ${version}`
         }
         // 添加邮件信息
         if (email && partialExtend.includes('email')) {

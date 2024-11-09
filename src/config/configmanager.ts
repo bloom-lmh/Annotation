@@ -1,8 +1,10 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 import * as vscode from 'vscode';
-import { AnnotationConfig, ClassAnnotationConfig, GlobalAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig, WordMaps } from './configtype';
-
+import {
+    AnnotationConfig, ClassAnnotationConfig,
+    GlobalAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig, TranslationConfig
+} from './configtype';
 /* export function defineConfig(config: AnnotationConfig): AnnotationConfig {
     return config
 } */
@@ -48,16 +50,16 @@ export class ConfigManager {
         // 获取属性注解配置
         const vscodePropertyConfig: PropertyAnnotationConfig = vscodeConfig.get("propertySetting") || {}
         // 获取单词映射
-        const vscodeWordMaps: WordMaps = vscodeConfig.get("wordMaps") || {}
+        const vscodeTranslationConfig: TranslationConfig = vscodeConfig.get("translationSetting") || {}
         // 返回注解配置对象
-        return { globalConfig: vscodeGlobalConfig, methodConfig: vscodeMethodConfig, classConfig: vscodeClassConfig, propertyConfig: vscodePropertyConfig, wordMaps: vscodeWordMaps }
+        return { globalConfig: vscodeGlobalConfig, methodConfig: vscodeMethodConfig, classConfig: vscodeClassConfig, propertyConfig: vscodePropertyConfig, translationConfig: vscodeTranslationConfig }
     }
     /**
      * 加载用户配置
      */
-    public static loadProjectConfig(projectPath: string): AnnotationConfig {
+    public static loadProjectConfig(configPath: string): AnnotationConfig {
         // 拼接文件路径
-        const filePath = path.join(projectPath, 'annotation.config.json')
+        const filePath = path.join(configPath, 'annotation.config.json')
         // 优先加载用户的ts配置文件
         // 加载用户的js配置文件
         // 加载用户json格式的配置文件
@@ -71,19 +73,49 @@ export class ConfigManager {
      * 合并配置
      */
     public static mergeConfig(vscodeConfig: AnnotationConfig, projectConfig: AnnotationConfig) {
+        // 获取默认配置
+        const defaultconfig = ConfigManager.getDefaultConfig()
+        // 加载默认配置
         let globalConfig: GlobalAnnotationConfig = {}
         let classConfig: ClassAnnotationConfig = {}
         let methodConfig: MethodAnnotationConfig = {}
         let propertyConfig: PropertyAnnotationConfig = {}
-        let wordMaps: WordMaps = {}
+        let translationConfig: TranslationConfig = {}
         // 合并用户项目配置和vscode配置
-        Object.assign(globalConfig, vscodeConfig.globalConfig, projectConfig.globalConfig)
-        Object.assign(classConfig, vscodeConfig.classConfig, projectConfig.classConfig)
-        Object.assign(methodConfig, vscodeConfig.methodConfig, projectConfig.methodConfig)
-        Object.assign(propertyConfig, vscodeConfig.propertyConfig, projectConfig.propertyConfig)
-        Object.assign(wordMaps, vscodeConfig.wordMaps, projectConfig.wordMaps)
+        Object.assign(globalConfig, defaultconfig.globalConfig, vscodeConfig.globalConfig, projectConfig.globalConfig)
+        Object.assign(classConfig, defaultconfig.classConfig, vscodeConfig.classConfig, projectConfig.classConfig)
+        Object.assign(methodConfig, defaultconfig.methodConfig, vscodeConfig.methodConfig, projectConfig.methodConfig)
+        Object.assign(propertyConfig, defaultconfig.propertyConfig, vscodeConfig.propertyConfig, projectConfig.propertyConfig)
+        Object.assign(translationConfig, defaultconfig.translationConfig, vscodeConfig.translationConfig, projectConfig.translationConfig)
 
         // 返回合并后的配置
-        return { globalConfig, classConfig, methodConfig, propertyConfig, wordMaps }
+        return { globalConfig, classConfig, methodConfig, propertyConfig, translationConfig }
+    }
+    /**
+     * 默认配置
+     */
+    public static getDefaultConfig() {
+        return {
+            "globalConfig": {
+
+            },
+            "classConfig": {
+            },
+            "methodConfig": {
+                "parameters": true,
+                "throwErrors": true,
+                "returnType": true,
+            },
+            "propertyConfig": {
+                "propertyType": true
+            },
+            "translationConfig": {
+                "apiKey": ["G3spRPsvd9ZmSSGykVSD", "MqENgg3NeMirAsnEpa4z", "3qDhjpKw5GaCi2HohyFi", "cAirtriojQobuTu9Yre2"],
+                "open": true,
+                "wordMaps": {
+                    "i": "接口"
+                }
+            }
+        }
     }
 }

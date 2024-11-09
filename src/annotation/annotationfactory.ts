@@ -16,9 +16,9 @@ export class AnnotationFactory {
         // 获取成员名
         let memberName = memberDeclaration.getName() || ''
         // 解构用户配置
-        let { classConfig, methodConfig, propertyConfig, globalConfig, wordMaps } = annotationConfig
+        let { classConfig, methodConfig, propertyConfig, globalConfig, translationConfig } = annotationConfig
         // 调用翻译接口进行翻译
-        memberName = await WordUtil.handleWord(memberName, wordMaps)
+        memberName = await WordUtil.handleWord(memberName, translationConfig)
         // 若成员是类，创建类注释对象
         if (memberDeclaration instanceof ClassDeclaration) {
             const isAbstract = memberDeclaration.isAbstract()

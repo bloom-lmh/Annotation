@@ -35,7 +35,7 @@
           "tel": "your telephone",
           "description": "the description about class method or property",
           "dateTime": "YYYY-MM-DD hh:mm:ss",
-          "version": "1.0.0"
+          "version": "the method or class version"
         },
         "annotation.classSetting": {
           "partialExtend": "provides an array of properties that partially inherits the global configuration"
@@ -50,7 +50,11 @@
           "propertyType": true,
           "partialExtend": "provides an array of properties that partially inherits the global configuration"
         },
-        "annotation.wordMaps": {}
+        "annotation.translationSetting": {
+          "apiKey": "provide the api keys",
+          "open": true,
+          "wordMaps": {}
+        }
       }
     }
   },
