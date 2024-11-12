@@ -19,8 +19,6 @@ export class WordUtil {
                     // 获取随机一条apiKey
                     const randomNumber = Math.floor(Math.random() * apiKey.length);
                     key = apiKey[randomNumber]
-                    console.log(key);
-
                 } else {
                     key = apiKey
                 }
