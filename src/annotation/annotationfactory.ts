@@ -1,8 +1,8 @@
 import { ClassDeclaration, FunctionDeclaration, MethodDeclaration, PropertyDeclaration } from "ts-morph";
-import { Annotation, ClassAnnotation, MethodAnnotation, PropertyAnnotation } from '../annotation/annotation';
+import { Annotation, ClassAnnotation, MethodAnnotation, PropertyAnnotation } from './annotation';
 import { TsFileParser } from "../parser/tsFileParser";
-import { AnnotationConfig } from "../config/configtype";
-import { WordUtil } from "../utils/wordutil";
+import { AnnotationConfig } from "../config/configType";
+import { WordUtil } from "../utils/wordUtil";
 /**
  * 注解工厂
  */

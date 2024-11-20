@@ -1,5 +1,5 @@
 import { getTranslation } from "../api/translateApi";
-import { TranslationConfig } from "../config/configtype";
+import { TranslationConfig } from "../config/configType";
 
 /**
  * 文本处理工具

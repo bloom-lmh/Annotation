@@ -1,7 +1,7 @@
 {
-  "name": "demo",
-  "displayName": "demo",
-  "description": "",
+  "name": "annotation",
+  "displayName": "annotation",
+  "description": "A plugin that quickly generates jsdoc comments",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.94.0"

@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import {
     AnnotationConfig, ClassAnnotationConfig,
     GlobalAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig, TranslationConfig
-} from './configtype';
+} from './configType';
 /* export function defineConfig(config: AnnotationConfig): AnnotationConfig {
     return config
 } */

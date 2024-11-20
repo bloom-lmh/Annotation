@@ -1,4 +1,4 @@
-import { ConfigManager } from "../config/configmanager"
+import { ConfigManager } from "../config/configManager"
 import dayjs from 'dayjs'
 
 /**

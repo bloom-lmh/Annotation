@@ -1,5 +1,5 @@
-import { ClassAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig } from "../config/configtype"
-import { AnnotationDecorator } from "./annotationdecorator"
+import { ClassAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig } from "../config/configType"
+import { AnnotationDecorator } from "./annotationDecorator"
 
 /**
  * 抽象的注解
@@ -69,7 +69,7 @@ export class ClassAnnotation extends Annotation {
         let jsdocStr = ''
         // 类名
         jsdocStr += `\n${this.className}类`
-        // 装饰字符串
+        // 基于配置装饰字符串
         if (partialExtend) {
             jsdocStr = AnnotationDecorator.decorateAnnotation(jsdocStr, partialExtend)
         }
@@ -154,6 +154,7 @@ export class MethodAnnotation extends Annotation {
             }
             jsdocStr += throwStr
         }
+        // 基于配置装饰
         if (partialExtend) {
             jsdocStr = AnnotationDecorator.decorateAnnotation(jsdocStr, partialExtend)
         }
@@ -203,6 +204,7 @@ export class PropertyAnnotation extends Annotation {
         if (propertyType) {
             jsdocStr += `\n@type {${this.propertyType}}`
         }
+        // 基于配置装饰
         if (partialExtend) {
             jsdocStr = AnnotationDecorator.decorateAnnotation(jsdocStr, partialExtend)
         }
