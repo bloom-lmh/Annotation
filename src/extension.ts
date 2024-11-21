@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { Picker } from './picker/picker';
+import { ContextPicker } from './picker/contextPicker';
 import { TsFileParser } from './parser/tsFileParser';
-import { ConfigManager } from './config/configManager';
+import { ConfigLoader } from './config/configLoader';
 import { AnnotationFactory } from './annotation/annotationFactory';
 export function activate(context: vscode.ExtensionContext) {
     //获取项目路径
@@ -13,6 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
     const projectPath = workspaceFolders[0].uri.fsPath;
 
+    console.log(projectPath);
 
     // 注册命令
     const disposable = vscode.commands.registerCommand('addAnnotation', async () => {
@@ -24,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
         // 创建拾取器对象拾取光标所在单词和文件名以及行号
-        const { fileName, wordText, lineNumber } = new Picker(editor).pick()
+        const { fileName, wordText, lineNumber } = new ContextPicker(editor).pick()
         // 解析ts文件为语法树
         const sourceFile = TsFileParser.parse(fileName)
         // 获文件解析失败提示信息
@@ -41,7 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
         // 加载用户配置
-        let annotationConfig = ConfigManager.loadConfig(projectPath)
+        let annotationConfig = ConfigLoader.loadConfig(projectPath)
         //console.log(annotationConfig);
         // 获取用户配置失败提示信息
         if (!annotationConfig) {
@@ -74,11 +75,15 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidOpenTextDocument(event => {
         console.log("aaa");
         console.log(`File opened: ${event.fileName}`);
-
-
         // 在这里添加你希望在文件打开时执行的代码
         // vscode.window.showInformationMessage(`File ${event.fileName} has been opened.`);
     });
+    // 文件保存，对比新旧文件进行更新
+    vscode.workspace.onDidSaveTextDocument(event => {
+        console.log("asad");
+    })
+
+    // 文件
     context.subscriptions.push(disposable);
 }
 

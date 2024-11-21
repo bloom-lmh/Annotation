@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
  * 内容拾取器
  * @description 用于拾取内容，并返回上下文对象
  */
-export class Picker {
+export class ContextPicker {
     /**
      * 文本编辑器
      */

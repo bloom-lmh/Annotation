@@ -1,4 +1,4 @@
-import { ConfigManager } from "../config/configManager"
+import { ConfigLoader } from "../config/configLoader"
 import dayjs from 'dayjs'
 
 /**
@@ -11,7 +11,7 @@ export class AnnotationDecorator {
      */
     public static decorateAnnotation(jsdocStr: string, partialExtend: Array<string>): string {
         // 获取全局配置
-        let { author, email, tel, dateTime, version } = ConfigManager.globalConfig
+        let { author, email, tel, dateTime, version } = ConfigLoader.globalConfig
         // jsdoc字符串
         let extendJsdocStr = ''
         // 添加作者信息
