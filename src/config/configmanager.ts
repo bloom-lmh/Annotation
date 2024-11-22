@@ -5,5 +5,4 @@ export class ConfigManager {
     /**
      * 用户项目配置
      */
-
 }

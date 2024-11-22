@@ -3,6 +3,7 @@ import { ContextPicker } from './picker/contextPicker';
 import { TsFileParser } from './parser/tsFileParser';
 import { ConfigLoader } from './config/configLoader';
 import { AnnotationFactory } from './annotation/annotationFactory';
+import { TsFileManager } from './parser/tsFileManager';
 export function activate(context: vscode.ExtensionContext) {
     //获取项目路径
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -28,6 +29,8 @@ export function activate(context: vscode.ExtensionContext) {
         const { fileName, wordText, lineNumber } = new ContextPicker(editor).pick()
         // 解析ts文件为语法树
         const sourceFile = TsFileParser.parse(fileName)
+        // 从管理器中获取文件
+        // const sourceFile = TsFileManager.getSourceFile(fileName)
         // 获文件解析失败提示信息
         if (!sourceFile) {
             vscode.window.showErrorMessage("文件解析失败！");
@@ -73,10 +76,10 @@ export function activate(context: vscode.ExtensionContext) {
     });
     // 文件打开就进行ast语法树的预解析
     vscode.workspace.onDidOpenTextDocument(event => {
-        console.log("aaa");
-        console.log(`File opened: ${event.fileName}`);
-        // 在这里添加你希望在文件打开时执行的代码
-        // vscode.window.showInformationMessage(`File ${event.fileName} has been opened.`);
+        const fileName = event.fileName
+        const sourceFile = TsFileParser.parse(fileName)
+        console.log(fileName);
+        TsFileManager.addSourceFile(fileName, sourceFile)
     });
     // 文件保存，对比新旧文件进行更新
     vscode.workspace.onDidSaveTextDocument(event => {

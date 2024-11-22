@@ -1,7 +1,7 @@
 import { SourceFile } from "ts-morph";
 
 /**
- * 文件管理器
+ * ts文件管理器
  */
 export class TsFileManager {
     /**
