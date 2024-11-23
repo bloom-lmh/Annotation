@@ -3,19 +3,17 @@ import { ContextPicker } from './picker/contextPicker';
 import { TsFileParser } from './parser/tsFileParser';
 import { ConfigLoader } from './config/configLoader';
 import { AnnotationFactory } from './annotation/annotationFactory';
-import { TsFileManager } from './parser/tsFileManager';
+import { ConfigManager } from './config/configManager';
 export function activate(context: vscode.ExtensionContext) {
-    //获取项目路径
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    // 获取工作区文件失败
-    if (!workspaceFolders) {
-        vscode.window.showErrorMessage('工作区没有打开的文件！');
-        return;
-    }
-    const projectPath = workspaceFolders[0].uri.fsPath;
-
-    console.log(projectPath);
-
+    /*  //获取项目路径
+     const workspaceFolders = vscode.workspace.workspaceFolders;
+     // 获取工作区文件失败
+     if (!workspaceFolders) {
+         vscode.window.showErrorMessage('工作区没有打开的文件！');
+         return;
+     } */
+    // 加载工作区全部配置文件
+    ConfigLoader.loadWorkspaceConfig()
     // 注册命令
     const disposable = vscode.commands.registerCommand('addAnnotation', async () => {
         // 获取文本编辑器
@@ -29,8 +27,6 @@ export function activate(context: vscode.ExtensionContext) {
         const { fileName, wordText, lineNumber } = new ContextPicker(editor).pick()
         // 解析ts文件为语法树
         const sourceFile = TsFileParser.parse(fileName)
-        // 从管理器中获取文件
-        // const sourceFile = TsFileManager.getSourceFile(fileName)
         // 获文件解析失败提示信息
         if (!sourceFile) {
             vscode.window.showErrorMessage("文件解析失败！");
@@ -44,9 +40,16 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage("获取成员信息失败！");
             return;
         }
-        // 加载用户配置
-        let annotationConfig = ConfigLoader.loadConfig(projectPath)
-        //console.log(annotationConfig);
+        // 获取文件所属项目路径
+        const folderPath = vscode.workspace.getWorkspaceFolder(editor.document.uri)?.uri.fsPath
+        // 获取用户配置失败提示信息
+        if (!folderPath) {
+            vscode.window.showErrorMessage("获取项目路径失败！");
+            return;
+        }
+        // 获取项目配置
+        let annotationConfig = ConfigManager.getProjectConfig(folderPath)
+        // let annotationConfig = ConfigLoader.loadConfig(projectPath)
         // 获取用户配置失败提示信息
         if (!annotationConfig) {
             vscode.window.showErrorMessage("获取用户配置失败！");
@@ -74,19 +77,9 @@ export function activate(context: vscode.ExtensionContext) {
         // 保存更改到文件  
         sourceFile.saveSync();
     });
-    // 文件打开就进行ast语法树的预解析
-    vscode.workspace.onDidOpenTextDocument(event => {
-        const fileName = event.fileName
-        const sourceFile = TsFileParser.parse(fileName)
-        console.log(fileName);
-        TsFileManager.addSourceFile(fileName, sourceFile)
-    });
-    // 文件保存，对比新旧文件进行更新
-    vscode.workspace.onDidSaveTextDocument(event => {
-        console.log("asad");
-    })
-
-    // 文件
+    // 文件保存监听
+    // 文件变动监听
+    // 更新配置文件
     context.subscriptions.push(disposable);
 }
 

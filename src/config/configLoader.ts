@@ -1,10 +1,12 @@
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 import * as vscode from 'vscode';
 import {
     AnnotationConfig, ClassAnnotationConfig,
     GlobalAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig, TranslationConfig
 } from './configType';
+import { WorkspaceUtil } from '../utils/workspaceUtil';
+import { ConfigManager } from './configManager';
 /* export function defineConfig(config: AnnotationConfig): AnnotationConfig {
     return config
 } */
@@ -13,26 +15,37 @@ export class ConfigLoader {
     /**
      * 全局配置
      */
-    public static globalConfig: GlobalAnnotationConfig
+    // public static globalConfig: GlobalAnnotationConfig
     /**
      * 定义配置
      */
     public static defineConfig(config: AnnotationConfig) {
         return config
     }
+    /**
+      * 加载工作区的全部配置文件
+      */
+    public static loadWorkspaceConfig() {
+        // 获取工作区的全部项目路径
+        let projectPaths: Array<string> = WorkspaceUtil.getProjectPath()
+        projectPaths.forEach(projectPath => {
+            ConfigManager.addProjectConfig(projectPath, this.loadConfig(projectPath))
+        })
 
+
+    }
     /**
      * 加载配置
      */
     public static loadConfig(projectPath: string): AnnotationConfig {
         // 首先尝试加载用户配置
-        const projectConfig = ConfigLoader.loadProjectConfig(projectPath)
+        const projectConfig = this.loadProjectConfig(projectPath)
         // 若用户本地配置不存在再加载vscode配置
-        const vscodeConfig = ConfigLoader.loadVscodeConfig()
+        const vscodeConfig = this.loadVscodeConfig()
         // 合并配置
-        let annotationConfig: AnnotationConfig = ConfigLoader.mergeConfig(vscodeConfig, projectConfig)
+        let annotationConfig: AnnotationConfig = this.mergeConfig(vscodeConfig, projectConfig)
         // 记录全局配置
-        ConfigLoader.globalConfig = annotationConfig.globalConfig || {}
+        // this.globalConfig = annotationConfig.globalConfig || {}
         // 返回合并后的配置
         return annotationConfig
     }
@@ -63,9 +76,11 @@ export class ConfigLoader {
         // 优先加载用户的ts配置文件
         // 加载用户的js配置文件
         // 加载用户json格式的配置文件
-        let annotationConfig: AnnotationConfig;
-        const config = readFileSync(filePath)
-        annotationConfig = JSON.parse(config.toString())
+        let annotationConfig: AnnotationConfig = {};
+        if (existsSync(filePath)) {
+            const config = readFileSync(filePath)
+            annotationConfig = JSON.parse(config.toString())
+        }
         return annotationConfig
     }
 
@@ -74,7 +89,7 @@ export class ConfigLoader {
      */
     public static mergeConfig(vscodeConfig: AnnotationConfig, projectConfig: AnnotationConfig) {
         // 获取默认配置
-        const defaultconfig = ConfigLoader.getDefaultConfig()
+        const defaultconfig = this.getDefaultConfig()
         // 加载默认配置
         let globalConfig: GlobalAnnotationConfig = {}
         let classConfig: ClassAnnotationConfig = {}
@@ -91,6 +106,8 @@ export class ConfigLoader {
         // 返回合并后的配置
         return { globalConfig, classConfig, methodConfig, propertyConfig, translationConfig }
     }
+
+
     /**
      * 默认配置
      */

@@ -1,5 +1,6 @@
 import { ConfigLoader } from "../config/configLoader"
 import dayjs from 'dayjs'
+import { AnnotationConfig, GlobalAnnotationConfig } from "../config/configType"
 
 /**
  * 注解装饰器
@@ -9,9 +10,9 @@ export class AnnotationDecorator {
     /**
      * 根据继承信息装饰默认注解
      */
-    public static decorateAnnotation(jsdocStr: string, partialExtend: Array<string>): string {
+    public static decorateAnnotation(globalConfig: GlobalAnnotationConfig, partialExtend: Array<string>): string {
         // 获取全局配置
-        let { author, email, tel, dateTime, version } = ConfigLoader.globalConfig
+        let { author, email, tel, dateTime, version } = globalConfig
         // jsdoc字符串
         let extendJsdocStr = ''
         // 添加作者信息
@@ -36,8 +37,6 @@ export class AnnotationDecorator {
         if (tel && partialExtend.includes('tel')) {
             extendJsdocStr += `\ntel: ${tel}`
         }
-
-
-        return jsdocStr + extendJsdocStr
+        return extendJsdocStr
     }
 }

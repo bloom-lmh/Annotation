@@ -1,4 +1,4 @@
-import { ClassAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig } from "../config/configType"
+import { ClassAnnotationConfig, GlobalAnnotationConfig, MethodAnnotationConfig, PropertyAnnotationConfig } from "../config/configType"
 import { AnnotationDecorator } from "./annotationDecorator"
 
 /**
@@ -10,11 +10,16 @@ export abstract class Annotation {
 */
     private startRow: number
     /**
+     * 全局配置
+     */
+    private globalConfig: GlobalAnnotationConfig
+    /**
      * 
      * @param startRow 注释开始行
      */
-    constructor(startRow: number) {
+    constructor(startRow: number, globalConfig: GlobalAnnotationConfig) {
         this.startRow = startRow
+        this.globalConfig = globalConfig
     }
     /**
   * 创建注解
@@ -27,6 +32,13 @@ export abstract class Annotation {
      */
     public getStartRow() {
         return this.startRow
+    }
+
+    /**
+     * 获取全局注释
+     */
+    public getGlobalConfig() {
+        return this.globalConfig
     }
 }
 /**
@@ -51,8 +63,8 @@ export class ClassAnnotation extends Annotation {
      * @param className 类名
      * @param isAbstract 是否抽象类
      */
-    constructor(startRow: number, className: string, isAbstract: boolean, classConfig: ClassAnnotationConfig) {
-        super(startRow)
+    constructor(startRow: number, className: string, isAbstract: boolean, classConfig: ClassAnnotationConfig, globalConfig: GlobalAnnotationConfig) {
+        super(startRow, globalConfig)
         this.className = className
         this.isAbstract = isAbstract
         this.classConfig = classConfig
@@ -69,9 +81,9 @@ export class ClassAnnotation extends Annotation {
         let jsdocStr = ''
         // 类名
         jsdocStr += `\n${this.className}类`
-        // 基于配置装饰字符串
+        // 基于配置装饰生成额外的配置
         if (partialExtend) {
-            jsdocStr = AnnotationDecorator.decorateAnnotation(jsdocStr, partialExtend)
+            jsdocStr += AnnotationDecorator.decorateAnnotation(this.getGlobalConfig(), partialExtend)
         }
         return jsdocStr
     }
@@ -105,14 +117,15 @@ export class MethodAnnotation extends Annotation {
      * 
      * @param memberDeclaration 方法声明
      */
-    constructor(startRow: number, methodName: string, parameters: Map<string, string>, returnType: string, throwErrors: Set<string>, methodConfig: MethodAnnotationConfig) {
-        super(startRow)
+    constructor(startRow: number, methodName: string, parameters: Map<string, string>, returnType: string, throwErrors: Set<string>, methodConfig: MethodAnnotationConfig, globalConfig: GlobalAnnotationConfig) {
+        super(startRow, globalConfig)
         this.methodName = methodName
         this.parameters = parameters
         this.returnType = returnType
         this.throwErrors = throwErrors
         this.methodConfig = methodConfig
     }
+
     /**
      * 创建注解
      * @returns jsdoc字符串
@@ -154,9 +167,9 @@ export class MethodAnnotation extends Annotation {
             }
             jsdocStr += throwStr
         }
-        // 基于配置装饰
+        // 基于配置装饰生成额外的配置
         if (partialExtend) {
-            jsdocStr = AnnotationDecorator.decorateAnnotation(jsdocStr, partialExtend)
+            jsdocStr += AnnotationDecorator.decorateAnnotation(this.getGlobalConfig(), partialExtend)
         }
         return jsdocStr
     }
@@ -185,8 +198,8 @@ export class PropertyAnnotation extends Annotation {
      * 
      * @param memberDeclaration 方法声明
      */
-    constructor(startRow: number, propertyName: string, propertyType: string, propertyConfig: PropertyAnnotationConfig) {
-        super(startRow)
+    constructor(startRow: number, propertyName: string, propertyType: string, propertyConfig: PropertyAnnotationConfig, globalConfig: GlobalAnnotationConfig) {
+        super(startRow, globalConfig)
         this.propertyName = propertyName
         this.propertyType = propertyType
         this.propertyConfig = propertyConfig
@@ -204,9 +217,9 @@ export class PropertyAnnotation extends Annotation {
         if (propertyType) {
             jsdocStr += `\n@type {${this.propertyType}}`
         }
-        // 基于配置装饰
+        // 基于配置装饰生成额外的配置
         if (partialExtend) {
-            jsdocStr = AnnotationDecorator.decorateAnnotation(jsdocStr, partialExtend)
+            jsdocStr += AnnotationDecorator.decorateAnnotation(this.getGlobalConfig(), partialExtend)
         }
         return jsdocStr
     }
