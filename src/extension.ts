@@ -12,6 +12,26 @@ export function activate(context: vscode.ExtensionContext) {
          vscode.window.showErrorMessage('工作区没有打开的文件！');
          return;
      } */
+    // 文件保存监听
+    vscode.workspace.onDidDeleteFiles(event => {
+        event.files.forEach(uri => {
+            console.log(`File deleted: ${uri.fsPath}`);
+            // 在这里添加你的逻辑来处理被删除的文件
+        });
+    });
+
+    // 监听文件移动（重命名）事件
+    vscode.workspace.onDidRenameFiles(event => {
+        event.files.forEach(({ oldUri, newUri }) => {
+            console.log(`File moved/renamed from ${oldUri.fsPath} to ${newUri.fsPath}`);
+            // 在这里添加你的逻辑来处理被移动或重命名的文件
+        });
+    });
+    vscode.workspace.onDidCreateFiles(event => {
+        console.log("c");
+    })
+    // 文件变动监听
+    // 更新配置文件
     // 加载工作区全部配置文件
     ConfigLoader.loadWorkspaceConfig()
     // 注册命令
@@ -76,10 +96,9 @@ export function activate(context: vscode.ExtensionContext) {
        } */
         // 保存更改到文件  
         sourceFile.saveSync();
+        // 做ast更新
     });
-    // 文件保存监听
-    // 文件变动监听
-    // 更新配置文件
+
     context.subscriptions.push(disposable);
 }
 
