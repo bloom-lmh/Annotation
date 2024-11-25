@@ -1,3 +1,4 @@
+import { TsFileManager } from "../parser/tsFileManager";
 import { ConfigLoader } from "./configLoader";
 import { AnnotationConfig } from "./configType";
 
@@ -13,7 +14,10 @@ export class ConfigManager {
     /**
      * 添加配置
      */
-    public static addProjectConfig(projectPath: string, annotationConfig: AnnotationConfig) {
+    public static addOrUpdateProjectConfig(projectPath: string, annotationConfig?: AnnotationConfig) {
+        if (!annotationConfig) {
+            annotationConfig = ConfigLoader.loadConfig(projectPath)
+        }
         this.projectConfigMap.set(projectPath, annotationConfig);
         // todo
         // 1. 若没有则添加
@@ -26,12 +30,16 @@ export class ConfigManager {
      * 获取配置
      */
     public static getProjectConfig(projectPath: string): AnnotationConfig {
+        for (const [key, value] of this.projectConfigMap) {
+            console.log(key, value);
+        }
+
         // 从集合中获取配置
         let annotationConfig = this.projectConfigMap.get(projectPath)
         // 若集合中没有则再进行加载
         if (!annotationConfig) {
             annotationConfig = ConfigLoader.loadConfig(projectPath)
-            this.addProjectConfig(projectPath, annotationConfig)
+            this.addOrUpdateProjectConfig(projectPath, annotationConfig)
         }
         // 返回配置
         return annotationConfig

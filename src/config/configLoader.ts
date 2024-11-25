@@ -29,7 +29,7 @@ export class ConfigLoader {
         // 获取工作区的全部项目路径
         let projectPaths: Array<string> = WorkspaceUtil.getProjectPath()
         projectPaths.forEach(projectPath => {
-            ConfigManager.addProjectConfig(projectPath, this.loadConfig(projectPath))
+            ConfigManager.addOrUpdateProjectConfig(projectPath, this.loadConfig(projectPath))
         })
 
 
@@ -70,9 +70,9 @@ export class ConfigLoader {
     /**
      * 加载用户配置
      */
-    public static loadProjectConfig(configPath: string): AnnotationConfig {
+    public static loadProjectConfig(projectPath: string): AnnotationConfig {
         // 拼接文件路径
-        const filePath = path.join(configPath, 'annotation.config.json')
+        const filePath = path.join(projectPath, 'annotation.config.json')
         // 优先加载用户的ts配置文件
         // 加载用户的js配置文件
         // 加载用户json格式的配置文件

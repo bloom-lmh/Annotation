@@ -4,6 +4,9 @@ import { TsFileParser } from './parser/tsFileParser';
 import { ConfigLoader } from './config/configLoader';
 import { AnnotationFactory } from './annotation/annotationFactory';
 import { ConfigManager } from './config/configManager';
+import path, { dirname } from 'path';
+import { url } from 'inspector';
+import { ConfigHandler } from './config/configHandler';
 export function activate(context: vscode.ExtensionContext) {
     /*  //获取项目路径
      const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -14,21 +17,21 @@ export function activate(context: vscode.ExtensionContext) {
      } */
     // 文件保存监听
     vscode.workspace.onDidDeleteFiles(event => {
-        event.files.forEach(uri => {
-            console.log(`File deleted: ${uri.fsPath}`);
-            // 在这里添加你的逻辑来处理被删除的文件
-        });
+        // 更新配置文件
+        ConfigHandler.handleChange(event)
     });
 
     // 监听文件移动（重命名）事件
     vscode.workspace.onDidRenameFiles(event => {
-        event.files.forEach(({ oldUri, newUri }) => {
-            console.log(`File moved/renamed from ${oldUri.fsPath} to ${newUri.fsPath}`);
-            // 在这里添加你的逻辑来处理被移动或重命名的文件
-        });
+        /*  event.files.forEach(({ oldUri, newUri }) => {
+             console.log(`File moved/renamed from ${oldUri.fsPath} to ${newUri.fsPath}`);
+             // 在这里添加你的逻辑来处理被移动或重命名的文件
+         }); */
+        console.log(event);
     });
     vscode.workspace.onDidCreateFiles(event => {
-        console.log("c");
+        // 更新配置文件
+        ConfigHandler.handleChange(event)
     })
     // 文件变动监听
     // 更新配置文件
@@ -61,15 +64,16 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
         // 获取文件所属项目路径
-        const folderPath = vscode.workspace.getWorkspaceFolder(editor.document.uri)?.uri.fsPath
+        const projectPath = vscode.workspace.getWorkspaceFolder(editor.document.uri)?.uri.fsPath
         // 获取用户配置失败提示信息
-        if (!folderPath) {
+        if (!projectPath) {
             vscode.window.showErrorMessage("获取项目路径失败！");
             return;
         }
         // 获取项目配置
-        let annotationConfig = ConfigManager.getProjectConfig(folderPath)
+        let annotationConfig = ConfigManager.getProjectConfig(projectPath)
         // let annotationConfig = ConfigLoader.loadConfig(projectPath)
+
         // 获取用户配置失败提示信息
         if (!annotationConfig) {
             vscode.window.showErrorMessage("获取用户配置失败！");
