@@ -4,37 +4,36 @@ import { TsFileParser } from './parser/tsFileParser';
 import { ConfigLoader } from './config/configLoader';
 import { AnnotationFactory } from './annotation/annotationFactory';
 import { ConfigManager } from './config/configManager';
-import path, { dirname } from 'path';
-import { url } from 'inspector';
 import { ConfigHandler } from './config/configHandler';
 export function activate(context: vscode.ExtensionContext) {
-    /*  //获取项目路径
-     const workspaceFolders = vscode.workspace.workspaceFolders;
-     // 获取工作区文件失败
-     if (!workspaceFolders) {
-         vscode.window.showErrorMessage('工作区没有打开的文件！');
-         return;
-     } */
+    // 为已经打开的文件生成ast
+    // 为打开的文件生成ast
+    // 为配置文件变化添加处理器
+    //ConfigHandler.handleFileChange()
+    vscode.workspace.textDocuments.forEach(doc => {
+        console.log(doc.fileName);
+    })
+    vscode.workspace.onDidOpenTextDocument(event => {
+        console.log("a");
+
+    })
     // 文件保存监听
     vscode.workspace.onDidDeleteFiles(event => {
         // 更新配置文件
-        ConfigHandler.handleChange(event)
+        ConfigHandler.handleCreateOrDelete(event)
     });
 
     // 监听文件移动（重命名）事件
     vscode.workspace.onDidRenameFiles(event => {
-        /*  event.files.forEach(({ oldUri, newUri }) => {
-             console.log(`File moved/renamed from ${oldUri.fsPath} to ${newUri.fsPath}`);
-             // 在这里添加你的逻辑来处理被移动或重命名的文件
-         }); */
-        console.log(event);
+        ConfigHandler.handleRename(event)
     });
     vscode.workspace.onDidCreateFiles(event => {
         // 更新配置文件
-        ConfigHandler.handleChange(event)
+        ConfigHandler.handleCreateOrDelete(event)
     })
-    // 文件变动监听
-    // 更新配置文件
+    vscode.workspace.onDidSaveTextDocument(event => {
+        ConfigHandler.handleSave(event)
+    })
     // 加载工作区全部配置文件
     ConfigLoader.loadWorkspaceConfig()
     // 注册命令

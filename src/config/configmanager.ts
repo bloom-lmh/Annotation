@@ -30,10 +30,10 @@ export class ConfigManager {
      * 获取配置
      */
     public static getProjectConfig(projectPath: string): AnnotationConfig {
-        for (const [key, value] of this.projectConfigMap) {
+        // 调试
+        /* for (const [key, value] of this.projectConfigMap) {
             console.log(key, value);
-        }
-
+        } */
         // 从集合中获取配置
         let annotationConfig = this.projectConfigMap.get(projectPath)
         // 若集合中没有则再进行加载

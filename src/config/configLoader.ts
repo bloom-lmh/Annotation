@@ -31,8 +31,6 @@ export class ConfigLoader {
         projectPaths.forEach(projectPath => {
             ConfigManager.addOrUpdateProjectConfig(projectPath, this.loadConfig(projectPath))
         })
-
-
     }
     /**
      * 加载配置

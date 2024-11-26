@@ -1,5 +1,6 @@
 {
   "name": "annotation",
+  "publisher": "SWUST-WEBLAB-LMH",
   "displayName": "annotation",
   "description": "A plugin that quickly generates jsdoc comments",
   "version": "0.0.1",
