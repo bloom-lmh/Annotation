@@ -3,7 +3,7 @@
   "publisher": "SWUST-WEBLAB-LMH",
   "displayName": "annotation",
   "description": "A plugin that quickly generates jsdoc comments",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "engines": {
     "vscode": "^1.94.0"
   },

@@ -14,17 +14,17 @@ Annotation参考了市面上热门的注释生成插件，如IEAD中Easy Javadoc
 # 起步
 ## 下载
 Annotation的使用非常简单，只需要在VSCODE插件市场上搜索annotation插件下载即可，真正的做到了开箱即用。
->但是注意当前Annotation只能支持最新的VSCODE版本，对低版本的VSCODE的兼容处理还在进行
+>:exclamation::exclamation::exclamation:但是注意当前Annotation只能支持最新的VSCODE版本，对低版本的VSCODE的兼容处理还在进行
 >中。当然也希望用户更新最新的VSCODE来使用，这样或许有更好的体验，[VSCODE官网](https://code.visualstudio.com/)。
 
 ## 使用
 Annotation的使用十分简单，只需要将光标对准类、方法或属性然后按下`alt+\`即可生成块级注释
 ### 生成类注释
-![alt text](./assets/images/类上生成注释演示.gif)
+![alt text](https://s3.bmp.ovh/imgs/2024/11/28/37f283b0a9c7c38b.gif)
 ### 生成方法注释
-![alt text](./assets/images/方法上生成注释演示.gif)
+![alt text](https://s3.bmp.ovh/imgs/2024/11/28/3b13cd429a57bacd.gif)
 ### 生成属性注释
-![alt text](./assets/images/属性上生成注释演示.gif)
+![alt text](https://s3.bmp.ovh/imgs/2024/11/28/e4e89e41ac1c041f.gif)
 >注意：在生成注释的时候需要先保存文件，否则无法进行选中
 
 # 配置
@@ -118,6 +118,8 @@ Annotation支持配置多元化，这样可以尽可能的保证用户配置生�
 ```
 
 # 维护与支持
-目前Annotation版本为1.0.0，还有一些BUG还没有暴露，所以后续我会对出现的BUG进行维护，并进行更充分的测试
-项目源码已经放到github上，希望大家可以为我提出一些建议，如果觉得好用的朋友也可以为我点点赞，这也是我前进的动力。
+目前Annotation版本为1.0.2，还有一些BUG还没有暴露，所以后续我会对插件进行更充分的测试，并对出现的BUG进行维护。
+项目源码已经放到github上，希望大家可以为我提出一些建议，我会根据建议进行改进。
 [Github地址](https://github.com/bloom-lmh/Annotation)
+如果喜欢的朋友也可以为我点点赞，这也是我前进的动力。当然也可以请喝咖啡:smile:🤝☕☕
+![支付](https://s3.bmp.ovh/imgs/2024/11/28/d8c75735f1d5e138.png)
