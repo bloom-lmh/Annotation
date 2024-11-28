@@ -3,8 +3,13 @@ import { Annotation, ClassAnnotation, MethodAnnotation, PropertyAnnotation } fro
 import { TsFileParser } from "../parser/tsFileParser";
 import { AnnotationConfig } from "../config/configType";
 import { WordUtil } from "../utils/wordUtil";
+
 /**
- * 注解工厂
+ * undefined类
+ * @author ccf
+ * @dateTime 2024-11-27 10:26:02
+ * @version 1.0.1
+ * tel: 15520513797
  */
 export class AnnotationFactory {
     /**
@@ -18,7 +23,10 @@ export class AnnotationFactory {
         // 解构用户配置
         let { classConfig, methodConfig, propertyConfig, globalConfig, translationConfig } = annotationConfig
         // 调用翻译接口进行翻译
-        memberName = await WordUtil.handleWord(memberName, translationConfig)
+        let translatedName = await WordUtil.handleWord(memberName, translationConfig)
+        if (translatedName) {
+            memberName = translatedName
+        }
         // 若成员是类，创建类注释对象
         if (memberDeclaration instanceof ClassDeclaration) {
             const isAbstract = memberDeclaration.isAbstract()

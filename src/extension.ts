@@ -14,6 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
         console.log(doc.fileName);
     })
     vscode.workspace.onDidOpenTextDocument(event => {
+        // 对文件进行预解析
         console.log("a");
 
     })

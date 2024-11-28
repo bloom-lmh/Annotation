@@ -1,253 +1,123 @@
-# 开发日志
-## 10月25日
+# 简介
+## 什么是 Annotation
+Annotation是一款轻量级的支持定制化的注释生成插件，能够快速的通过命令为你的ts或js文件中的类、方法和属性生成满足 [jsdoc](https://jsdoc.bootcss.com/)风格的注释，让你在开发中有飞一般的体验。
+## 特色功能
+Annotation参考了市面上热门的注释生成插件，如IEAD中Easy Javadoc的和VSCODE中的koroFileHeader插件，并结合了他们的优点而诞生。无论你是后端程序员还是前端程序员，都能让你在开发中有熟悉的感觉。其功能包括
+- 快捷键生成类的注释
+- 快捷键生成方法的注释
+- 快捷生成属性注释
+- 进行个性化配置
+  - 如对类、方法、属性注释元素进行配置
+  - 自定义翻译接口
+- 支持配置的迁移和复用，让你无论在什么设备上都可以使用自己习惯的注释生成方式
 
-知识储备
+# 起步
+## 下载
+Annotation的使用非常简单，只需要在VSCODE插件市场上搜索annotation插件下载即可，真正的做到了开箱即用。
+>但是注意当前Annotation只能支持最新的VSCODE版本，对低版本的VSCODE的兼容处理还在进行
+>中。当然也希望用户更新最新的VSCODE来使用，这样或许有更好的体验，[VSCODE官网](https://code.visualstudio.com/)。
 
-  - 学习vscode插件开发文档
-  - 学习Git提交代码以及分支管理
-## 10月26日
-1. 开发环境准备：
-   - 安装了GIt，使用GIt进行版本控制和代码提交
-   - 搭建了GitHub仓库
-   - 安装Generator-code：Generator-code是一个生成器，专门用于创建和管理VS Code扩展。
-2. 搭建项目结构
-   - 使用npm install -g yo generator-code创建了项目
-   - 建立开发分支dev1.0.0
-   - 提交项目到了GitHub
-3. 遇到问题
-   - Git使用不够熟练，特别是在远程分支同步以及分支合并上
-4. 解决方案
-   - 查询Git使用教程
+## 使用
+Annotation的使用十分简单，只需要将光标对准类、方法或属性然后按下`alt+\`即可生成块级注释
+### 生成类注释
+![alt text](./assets/images/类上生成注释演示.gif)
+### 生成方法注释
+![alt text](./assets/images/方法上生成注释演示.gif)
+### 生成属性注释
+![alt text](./assets/images/属性上生成注释演示.gif)
+>注意：在生成注释的时候需要先保存文件，否则无法进行选中
 
-## 10月27日
+# 配置
+## 约定大于配置
+Annotation支持用户个性化的配置，但是为了开箱即用，Annotation对常用的选项进行了默认设置。用户不必进行过多的配置或者可以不需要进行配置就能享受到目前市面上最流行的注释方式。
+## 支持的配置形式
+当然如果你想进行配置，Annotation支持如下两种配置方式
+### VSCODE内部配置
+Annotation支持直接在VSCODE内部进行直接配置
+```json
+"annotation.globalSetting": {
+  // 作者
+  "author": "author name",
+  // 作者邮箱
+  "email": "your email",
+  // 作者电话
+  "tel": "your telephone",
+  // 描述信息
+  "description": "the description about class method or property",
+  // 注释添加时间
+  "dateTime": "YYYY-MM-DD hh:mm:ss",
+  // 类或方法版本号
+  "version": "the method or class version"
+},
+"annotation.classSetting": {},
+"annotation.methodSetting": {
+  // 是否开启参数 默认为开启
+  "parameters": true,
+  // 是否开启返回值 默认为开启
+  "returnType": true,
+  // 是否开启抛出异常 默认为开启 配置false则关闭
+  "throwErrors": true
+},
+"annotation.propertySetting": {
+  // 是否开启属性类型 默认开启
+  "propertyType": true
+},
+"annotation.translationSetting": {
+  // 是否开启翻译 默认开启 配置false则关闭
+  "open": true,
+  // 用户自定义的单词映射库（预开发功能还没生效）
+  "wordMaps": {
+    "i": "接口",
+    "map": "映射"
+  },
+  // 用户自定义翻译接口秘钥 可以是数组形式也可以是单个api字符串
+  "apiKey": ["秘钥"]
+},
+```
+### JSON文件配置
+Annotation支持配置多元化，这样可以尽可能的保证用户配置生效。Annotation支持目前最常见的基于json格式的配置方式，你只需要在项目根目录下添加`annotation.config.json`配置文件即可进行配置了。配置格式和VSCODE内部配置格式一致
+```json
+{
+  "globalConfig": {
+    // ...
+  },
+  "classConfig": {
+    // ...
+  },
+  "methodConfig": {
+   // ...
+  },
+  "propertyConfig": {},
+  "translationConfig": {}
+}
+```
+## 配置优先级
+通常来说，当你既定义了VSCODE的配置又定义本地项目的json配置，那么本地项目的json配置会覆盖掉VSCODE中相同的配置。当然如果你什么都不进行配置，那么插件将使用默认配置。
+也就是说 `annotation.config.json` > `vscode配置` > `默认配置`
+## 部分继承
+全局配置默认是不会进行生效的，对于全局配置的使用需要方法或类进行部分继承才能生效，也就是使用`"partialExtend"`字段来进行部分继承，使用如下：
+```json
+{
+  "globalConfig": {
+    "author": "ccf",
+    "email": "1357526355@qq.com",
+    "tel": "15520513797",
+    "dateTime": "YYYY-MM-DD hh:mm:ss",
+    "version": "1.0.1"
+  },
+  "classConfig": {
+    "partialExtend": ["author", "dateTime", "tel", "version"]
+  },
+  "methodConfig": {
+    "returnType": false,
+    "partialExtend": ["dateTime", "version"]
+  },
+  "propertyConfig": {},
+  "translationConfig": {}
+}
+```
 
-1. **任务目标**：项目架构
-- 实现通过快捷键激活命令
-  
-- 添加注释类与用户注释配置相映射
-  
-- 添加注释装饰器类，目标功能为实现向类和方法添加注释
-
-
-   - 添加拾取器获取光标所在上下文
-   - 添加解析器，解析拾取器获取的文档生成注释
-
-2. 实现
-
-   - 拾取器：拾取器主要的任务在于拾取上下文对象用于后续注释生成，拾取完成后返回包含拾取信息的上下文对象
-     1. 拾取的是方法，则需要拾取完整的方法，包括方法权限、方法名、方法返回值、方法抛出异常
-     2. 拾取的是类，则仅仅需要拾取到类名结束
-     3. 两者都不是则不进行拾取
-     4. 拾取完成后还要判断拾取的内容上方情况，为了后续的注释插入
-
-   - 解析器：解析器的任务在与根据拾取器放回的上下文对象建立实际的注释映射
-     1. 利用正则表达式提取类名、方法权限、方法名、方法返回值、方法抛出异常等要在注释中展示的内容
-     2. 加载配置，实现用户定制内容，包括日期格式、名字映射等
-        最终生成注释对象
-   - 注释对象：注释对象是实际注释的抽象，包含注释的位置，内容等信息，并有注释生成方法最终实现注释的生成
-
-3. 问题所在：
-
-   - 应该减轻拾取器的负担，它有太多的职责
-   - 正则表达式有局限性，因为方法类型太多无法完成匹配
-
-4. 问题分析
-   - 使用AST语法树代替正则表达式
-
-## 10月28日
-
-1. **任务目标**
-   - 拾取器拾取实现到文件信息，单词信息，行号
-   - 通过AST识别出方法、类、属性等信息
-2. **实现途径**
-   - 调用vscodeAPI来完成信息的拾取需要的信息
-   - 通过Typescript来编译器API来讲ts文件解析为AST语法树然后遍历节点获取节点信息
-3. **遇到问题**
-   - Typescript编译器API太过于复杂，学习成本很高
-   - 保存后的文件信息行号发生变动，导致注释冲突
-4. **解决方案**
-   - 寻找typescript的编译器封装库来完成，减轻开发负担，这里找到的是ts-morph
-
-5. **完成情况**：已经能够实现了完成根据名字识别出具体信息然后生成基本的jsDoc风格的注释了
-
-## 10月29日
-已经基本实现了添加注释功能，但是还有一些bug，以及项目架构的问题需要解决
-bug包括
-1. 撤销保存时注释会出现问题
-2. 若有注释应该删除原来的注释
-
-待开发
-1.应该读取配置来决定生成的内容，且允许用户进行配置
-
-## 10月30日
-对于bug的解决方案
-1. 不能添加后自动保存，这是违反直觉的，最好不以次为解决方案
-2. 尝试不使用原生的typescript编译器 而使用ts-morph来进行解决，方法注释应该由此工具类来添加
-3. 经过验证ts-morph是一个可行的解决方案，使用map来记录生成的注释（测试看是否会因为位置的变动而不能删除），同时对于用户自己添加的注释要与现有注释进行对比看是否要添加
-
-## 11月2日
-
-1. **任务目标**：完成基本的注释生成
-
-2. **遇到问题**
-
-   - 生成注释格式需要进行调整，如@Return后不应该有换行等
-
-   - 对于vscode缩进为2的编辑器格式会出现问题，但是缩进为4的编辑器格式不会出现问题
-
-3. **解决方案**
-   - 去除@Return后的换行，以及调整格式
-
-4. **未解决的问题**
-   - 缩进为2的编辑器注释格式混乱
-
-## 11月3日
-
-1. **任务目标**
-   - 引入翻译接口，实现对文本的翻译
-   - 引入配置文件，实现注解的可定制化
-
-2. **遇到问题**
-
-   - 翻译接口需要进行充值，如谷歌翻译、百度翻译等免费使用次数为10000个字符数
-
-   - 不明确用户可以进行哪些配置
-
-3. **解决方案**
-
-   - 四个接口平均访问，这样免费的字符数可以达到40000个，40000个字符使用完成后可以允许用户自己配置翻译接口的秘钥
-
-   - 用户可以进行如下的配置
-
-   ```tsx
-   export interface GlobalAnnotationConfig {
-       // 是否加上作者,填写作者名
-       author?: string | null,
-       // 是否加上邮箱
-       email?: string | null,
-       // 是否加上电话
-       tel?: string | null,
-       // 是否加上描述
-       description?: string | null
-       // 是否加上时间
-       date?: boolean,
-       // 是否加上日期时间
-       dateTime?: boolean,
-   }
-   export interface ClassAnnotationConfig extends GlobalAnnotationConfig {
-       className?: (className: string) => string
-   }
-   export interface MethodAnnotationConfig extends GlobalAnnotationConfig {
-       // 参数 可以不开启也可以用户自己指定
-       parameters?: boolean | ((parameters: Map<string, string>) => string)
-       // 返回值
-       returnType?: boolean,
-       // 抛出异常
-       throwErrors?: boolean | ((throwErrors: Array<string>) => string)
-       // 相同异常类型是否合并
-       throwMerge?: boolean
-   }
-   export interface PropertyAnnotationConfig extends GlobalAnnotationConfig {
-       // 类型是否开启
-       propertyType?: boolean
-   }
-   // 单词映射
-   export interface WordMaps {
-       [key: string]: string
-   }
-   export interface AnnotationConfig {
-       // 全局配置
-       globalConfig?: GlobalAnnotationConfig
-       // 类配置
-       classConfig?: ClassAnnotationConfig,
-       // 方法注解配置
-       methodConfig?: MethodAnnotationConfig,
-       // 属性配置
-       propertyConfig?: PropertyAnnotationConfig
-       // 单词映射
-       wordMaps?: WordMaps
-   }
-   ```
-
-## 11月5日
-
-1. **任务目标**
-
-   - 明确支持的配置文件格式有哪些，以及加载的优先级
-
-   - 创建配置管理器类实现对配置的加载，基本实现配置读取
-
-2. **遇到问题**
-   - 目前只能支持json格式的配置和vscode内部的配置而对于js类型和ts类型的配置文件则不能实现，因为插件和npm下载的依赖还是有很大的差别的，npm下载的依赖很容易提供类型文件以实现配置提示
-   - json配置文件的局限性还是很大的，其灵活性不如js和ts的配置文件，并且json文件不能像ts那样轻松的实现类型提示
-   - 但是ts配置文件要通过语言服务器难度很大
-
-3. **解决方案**
-
-   - 配置优先级：本地ts配置>本地js配置>本地配置json配置>vscode配置
-
-   - js和ts方案失败，后续再考虑
-
-4. **完成情况**
-   - 能够加载json配置文件和vscode配置文件，并对配置文件进行合并
-
-
-## 11月6日
-
-1. **任务目标**
-   - 实现文本切割和单词映射
-   - 实现基于配置生成注解
-
-2. **遇到问题**
-
-   - 文本切割需要根据驼峰命名法来进行切割
-
-   - 生成AST和进行网络翻译（异步）会导致性能过差，生成注释会有明显的时延
-   - 解决格式的一些小问题
-   - 解决通过行号获取成员信息时由于行号不同带来的获取不到成员的问题
-
-3. **解决方案**
-
-   - 考虑采用预解析以及观察者模式来提前解析文件为AST语法树
-
-   - 考虑开启子进程来进行多进程的解析
-
-
-## 11月7日
-开启对全局配置的部分继承
-实现根据配置来生成注解
-
-## 11月8日
-实现文本切割和单词映射
-实现用户配置翻译接口,并进行提示
-实现版本添加
-探索ast预加载
-实现约定大于配置
-
-## 11月9日
-解决行号不对的bug
-解决翻译不全的bug
-解决ast预解析的问题
-
-
-## 11月20日
-对注解生成方式进行变化，考虑引入策略模式，这样可以不改变原来的生成策略，策略模式有更好的扩展性，以应对后面的配置变化
-## 11月21日
-实现ast语法树预解析，采用观察者模式来对发生变化的文件重新更新ast语法树
-1. 对打开文件直接做预先解析，并进行存储
-2. 获取文件首先尝试从集合中获取
-3. 若文件发生实质性变化则更新文件
-实现配置预加载
-1. 添加配置管理器，配置管理器负责管理各个项目的配置管理。当文件保存的时候会进行对比更新
-2. 添加配置预处理器，预处理器负责读取工作区的项目并建立项目配置
-## 11月22日
-继续完成21日未完成
-并且添加对export导出方法的支持
-
-## 11月23日
-基本实现配置的预加载，还需根据文件变动来更新配置文件
-继续对export 导出方法进行支持
-## 11月26日
-实现按配置预加载
-正在实现ast树的预解析
-需要解决不兼容低版本vscode的问题
+# 维护与支持
+目前Annotation版本为1.0.0，还有一些BUG还没有暴露，所以后续我会对出现的BUG进行维护，并进行更充分的测试
+项目源码已经放到github上，希望大家可以为我提出一些建议，如果觉得好用的朋友也可以为我点点赞，这也是我前进的动力。
+[Github地址](https://github.com/bloom-lmh/Annotation)

@@ -1,13 +1,8 @@
 import * as vscode from 'vscode';
 
-/**
- * 内容拾取器
- * @description 用于拾取内容，并返回上下文对象
- */
+
 export class ContextPicker {
-    /**
-     * 文本编辑器
-     */
+
     private editor: vscode.TextEditor
     /**
      * 
@@ -18,10 +13,7 @@ export class ContextPicker {
         this.editor = editor
     }
 
-
-    /**
-     * 拾取光标对应的单词
-     */
+    // 按下alt+\
     public pickCursorWordText(): string {
         // 获取光标位置对象
         const position = this.editor.selection.active;

@@ -4,14 +4,14 @@
     "email": "1357526355@qq.com",
     "tel": "15520513797",
     "dateTime": "YYYY-MM-DD hh:mm:ss",
-    "version": "1.0.1"
+    "version": "1.0.1",
+    "description": "描述点什么"
   },
   "classConfig": {
-    "partialExtend": ["author", "dateTime", "tel", "version"]
+    "partialExtend": ["author", "version", "description"]
   },
   "methodConfig": {
-    "returnType": false,
-    "partialExtend": ["dateTime", "version"]
+    "partialExtend": ["dateTime", "version", "description"]
   },
   "propertyConfig": {},
   "translationConfig": {}

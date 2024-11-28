@@ -1,17 +1,10 @@
 import * as vscode from 'vscode';
 import path, { basename, dirname } from 'path';
 import { ConfigManager } from './configManager';
-/**
- * 配置处理器
- */
+
 export class ConfigHandler {
 
-    /**
-     * 处理保存
-     * @param {import("vscode").TextDocument} event 事件对象
-     * @dateTime 2024-11-26 09:57:14
-     * @version 1.0.1
-     */
+
     public static handleSave(event: vscode.TextDocument) {
         if (basename(event.fileName) === "annotation.config.json") {
             ConfigManager.addOrUpdateProjectConfig(dirname(event.fileName))
