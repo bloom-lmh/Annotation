@@ -76,11 +76,14 @@ export class ClassAnnotation extends Annotation {
     public createAnnotation(): string {
 
         // 获取类配置
-        let { partialExtend } = this.classConfig
+        let { partialExtend, description } = this.classConfig
         // jsdoc字符串
         let jsdocStr = ''
         // 类名
         jsdocStr += `\n${this.className}类`
+        if (description) {
+            jsdocStr += `\n@description`
+        }
         // 基于配置装饰生成额外的配置
         if (partialExtend) {
             jsdocStr += AnnotationDecorator.decorateAnnotation(this.getGlobalConfig(), partialExtend)
@@ -132,7 +135,7 @@ export class MethodAnnotation extends Annotation {
      */
     public createAnnotation(): string {
         // 获取方法注解配置
-        let { parameters, throwErrors, returnType, partialExtend } = this.methodConfig
+        let { parameters, throwErrors, returnType, partialExtend, description } = this.methodConfig
         // jsdoc字符串
         let jsdocStr = ''
         let paramStr = ''
@@ -166,6 +169,10 @@ export class MethodAnnotation extends Annotation {
                 }
             }
             jsdocStr += throwStr
+        }
+        // 描述
+        if (description) {
+            jsdocStr += `\n@description`
         }
         // 基于配置装饰生成额外的配置
         if (partialExtend) {

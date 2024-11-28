@@ -16,7 +16,6 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidOpenTextDocument(event => {
         // 对文件进行预解析
         console.log("a");
-
     })
     // 文件保存监听
     vscode.workspace.onDidDeleteFiles(event => {

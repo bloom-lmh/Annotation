@@ -35,6 +35,7 @@ Annotation支持用户个性化的配置，但是为了开箱即用，Annotation
 ### VSCODE内部配置
 Annotation支持直接在VSCODE内部进行直接配置
 ```json
+/* annotation配置 start*/
 "annotation.globalSetting": {
   // 作者
   "author": "author name",
@@ -43,20 +44,25 @@ Annotation支持直接在VSCODE内部进行直接配置
   // 作者电话
   "tel": "your telephone",
   // 描述信息
-  "description": "the description about class method or property",
+  "description": "the description about class method or property"
   // 注释添加时间
   "dateTime": "YYYY-MM-DD hh:mm:ss",
   // 类或方法版本号
   "version": "the method or class version"
 },
-"annotation.classSetting": {},
+"annotation.classSetting": {
+  // 是否开启描述 默认为开启 配置false则关闭
+  "description": true
+},
 "annotation.methodSetting": {
   // 是否开启参数 默认为开启
   "parameters": true,
   // 是否开启返回值 默认为开启
   "returnType": true,
   // 是否开启抛出异常 默认为开启 配置false则关闭
-  "throwErrors": true
+  "throwErrors": true,
+  // 是否开启描述 默认为开启 配置false则关闭
+  "description": true
 },
 "annotation.propertySetting": {
   // 是否开启属性类型 默认开启
@@ -103,23 +109,32 @@ Annotation支持配置多元化，这样可以尽可能的保证用户配置生�
     "email": "1357526355@qq.com",
     "tel": "15520513797",
     "dateTime": "YYYY-MM-DD hh:mm:ss",
-    "version": "1.0.1"
+    "version": "1.0.1",
+    "description": "描述点什么"
   },
   "classConfig": {
-    "partialExtend": ["author", "dateTime", "tel", "version"]
+    "partialExtend": ["author", "version"]
   },
   "methodConfig": {
-    "returnType": false,
     "partialExtend": ["dateTime", "version"]
   },
   "propertyConfig": {},
-  "translationConfig": {}
+  "translationConfig": {
+    "open": true,
+    "apiKey": [
+      "G3spRPsvd9ZmSSGykVSD",
+      "MqENgg3NeMirAsnEpa4z",
+      "3qDhjpKw5GaCi2HohyFi",
+      "cAirtriojQobuTu9Yre2",
+      "aFF6HMrj3MtObnO4X3hs",
+      "0zbtxTxstrLwQ9uK2PuR"
+    ]
+  }
 }
 ```
 
 # 维护与支持
-目前Annotation版本为1.0.2，还有一些BUG还没有暴露，所以后续我会对插件进行更充分的测试，并对出现的BUG进行维护。
+目前Annotation版本为1.0.1，还有一些BUG还没有暴露，所以后续我会对插件进行更充分的测试，并对出现的BUG进行维护。
 项目源码已经放到github上，希望大家可以为我提出一些建议，我会根据建议进行改进。
 [Github地址](https://github.com/bloom-lmh/Annotation)
-如果喜欢的朋友也可以为我点点赞，这也是我前进的动力。当然也可以请喝咖啡:smile:🤝☕☕
-![支付](https://s3.bmp.ovh/imgs/2024/11/28/d8c75735f1d5e138.png)
+如果喜欢的朋友也可以为我点点赞，这也是我前进的动力。

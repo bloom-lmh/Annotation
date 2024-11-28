@@ -100,7 +100,6 @@ export class ConfigLoader {
         Object.assign(methodConfig, defaultconfig.methodConfig, vscodeConfig.methodConfig, projectConfig.methodConfig)
         Object.assign(propertyConfig, defaultconfig.propertyConfig, vscodeConfig.propertyConfig, projectConfig.propertyConfig)
         Object.assign(translationConfig, defaultconfig.translationConfig, vscodeConfig.translationConfig, projectConfig.translationConfig)
-
         // 返回合并后的配置
         return { globalConfig, classConfig, methodConfig, propertyConfig, translationConfig }
     }
@@ -120,9 +119,11 @@ export class ConfigLoader {
                 "parameters": true,
                 "throwErrors": true,
                 "returnType": true,
+                "description": true
             },
             "propertyConfig": {
-                "propertyType": true
+                "propertyType": true,
+                "description": true
             },
             "translationConfig": {
                 "apiKey": ["G3spRPsvd9ZmSSGykVSD", "MqENgg3NeMirAsnEpa4z", "3qDhjpKw5GaCi2HohyFi", "cAirtriojQobuTu9Yre2"],

@@ -8,11 +8,21 @@
     "description": "描述点什么"
   },
   "classConfig": {
-    "partialExtend": ["author", "version", "description"]
+    "partialExtend": ["author", "version"]
   },
   "methodConfig": {
-    "partialExtend": ["dateTime", "version", "description"]
+    "partialExtend": ["dateTime", "version"]
   },
   "propertyConfig": {},
-  "translationConfig": {}
+  "translationConfig": {
+    "open": true,
+    "apiKey": [
+      "G3spRPsvd9ZmSSGykVSD",
+      "MqENgg3NeMirAsnEpa4z",
+      "3qDhjpKw5GaCi2HohyFi",
+      "cAirtriojQobuTu9Yre2",
+      "aFF6HMrj3MtObnO4X3hs",
+      "0zbtxTxstrLwQ9uK2PuR"
+    ]
+  }
 }
