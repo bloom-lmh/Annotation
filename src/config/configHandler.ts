@@ -3,8 +3,6 @@ import path, { basename, dirname } from 'path';
 import { ConfigManager } from './configManager';
 
 export class ConfigHandler {
-
-
     public static handleSave(event: vscode.TextDocument) {
         if (basename(event.fileName) === "annotation.config.json") {
             ConfigManager.addOrUpdateProjectConfig(dirname(event.fileName))

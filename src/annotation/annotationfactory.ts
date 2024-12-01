@@ -3,13 +3,12 @@ import { Annotation, ClassAnnotation, MethodAnnotation, PropertyAnnotation } fro
 import { TsFileParser } from "../parser/tsFileParser";
 import { AnnotationConfig } from "../config/configType";
 import { WordUtil } from "../utils/wordUtil";
+import { TsFileUtil } from "../parser/tsFileUtil";
 
 /**
- * undefined类
+ * 注释工厂类
  * @author ccf
- * @dateTime 2024-11-27 10:26:02
  * @version 1.0.1
- * tel: 15520513797
  */
 export class AnnotationFactory {
     /**
@@ -35,9 +34,9 @@ export class AnnotationFactory {
         }
         // 若成员是方法，创建方法注释对象
         if (memberDeclaration instanceof MethodDeclaration || memberDeclaration instanceof FunctionDeclaration) {
-            const parameters = TsFileParser.getMethodParameters(memberDeclaration)
+            const parameters = TsFileUtil.getMethodParameters(memberDeclaration)
             const returnType = memberDeclaration.getReturnType().getText()
-            const throwErrors = TsFileParser.getMethodThrows(memberDeclaration)
+            const throwErrors = TsFileUtil.getMethodThrows(memberDeclaration)
             // methodConfig = Object.assign({}, globalConfig, methodConfig)
             return new MethodAnnotation(startRow, memberName, parameters, returnType, throwErrors, methodConfig || {}, globalConfig || {})
         }

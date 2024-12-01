@@ -1,4 +1,5 @@
 import { SourceFile } from "ts-morph";
+import { TsFileParser } from "./tsFileParser";
 
 /**
  * ts文件管理器
@@ -12,16 +13,26 @@ export class TsFileManager {
     /**
      * 添加ast语法树
      */
-    public static addSourceFile(filename: string, sourceFile: SourceFile) {
+    public static addOrUpdateSourceFile(filename: string, sourceFile: SourceFile) {
         // 没有则添加
-        if (!this.sourceFileMaps.has(filename)) {
-            this.sourceFileMaps.set(filename, sourceFile)
-        }
+        this.sourceFileMaps.set(filename, sourceFile)
+        /* if (!this.sourceFileMaps.has(filename)) {
+
+        } */
     }
     /**
      * 获取ast语法树
      */
     public static getSourceFile(fileName: string): SourceFile | undefined {
-        return this.sourceFileMaps.get(fileName)
+        let sourceFile = this.sourceFileMaps.get(fileName)
+        if (!sourceFile) {
+            sourceFile = TsFileParser.parse(fileName)
+            this.addOrUpdateSourceFile(fileName, sourceFile)
+        }
+        return sourceFile
+    }
+
+    public static removeSourceFile(fileName: string) {
+        this.sourceFileMaps.delete(fileName)
     }
 }
