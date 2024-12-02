@@ -39,10 +39,14 @@ export class ConfigManager {
         // 若集合中没有则再进行加载
         if (!annotationConfig) {
             annotationConfig = ConfigLoader.loadConfig(projectPath)
-            this.addOrUpdateProjectConfig(projectPath, annotationConfig)
+            /* this.addOrUpdateProjectConfig(projectPath, annotationConfig) */
         }
         // 返回配置
         return annotationConfig
+    }
+
+    public static removeProjectConfig(projectPath: string) {
+        this.projectConfigMap.delete(projectPath)
     }
 
     public static print() {

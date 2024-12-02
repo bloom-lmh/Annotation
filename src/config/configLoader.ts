@@ -7,6 +7,7 @@ import {
 } from './configType';
 import { WorkspaceUtil } from '../utils/workspaceUtil';
 import { ConfigManager } from './configManager';
+import { execFile } from 'child_process';
 /* export function defineConfig(config: AnnotationConfig): AnnotationConfig {
     return config
 } */
@@ -29,7 +30,9 @@ export class ConfigLoader {
         // 获取工作区的全部项目路径
         let projectPaths: Array<string> = WorkspaceUtil.getProjectPath()
         projectPaths.forEach(projectPath => {
-            ConfigManager.addOrUpdateProjectConfig(projectPath, this.loadConfig(projectPath))
+            if (existsSync(projectPath + '\\annotation.config.json')) {
+                ConfigManager.addOrUpdateProjectConfig(projectPath, this.loadConfig(projectPath))
+            }
         })
     }
     /**

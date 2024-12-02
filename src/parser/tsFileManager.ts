@@ -24,12 +24,12 @@ export class TsFileManager {
      * 获取ast语法树
      */
     public static getSourceFile(fileName: string): SourceFile | undefined {
-        let sourceFile = this.sourceFileMaps.get(fileName)
-        if (!sourceFile) {
-            sourceFile = TsFileParser.parse(fileName)
-            this.addOrUpdateSourceFile(fileName, sourceFile)
-        }
-        return sourceFile
+        /*  let sourceFile = this.sourceFileMaps.get(fileName)
+         if (!sourceFile) {
+             sourceFile = TsFileParser.parse(fileName)
+             this.addOrUpdateSourceFile(fileName, sourceFile)
+         } */
+        return this.sourceFileMaps.get(fileName)
     }
 
     public static removeSourceFile(fileName: string) {
