@@ -10,7 +10,6 @@ import path, { basename, dirname, extname } from 'path';
 import { TsFileManager } from './parser/tsFileManager';
 export function activate(context: vscode.ExtensionContext) {
     // 开启监听事件
-    /* WorkspaceListener.startListen() */
     vscode.workspace.textDocuments.forEach(doc => {
         // 对已经打开的ts文件进行解析
         // 若文件以ts或js结尾则将其解析为ast语法树
@@ -35,55 +34,96 @@ export function activate(context: vscode.ExtensionContext) {
     })
     // 文件保存监听
     vscode.workspace.onDidDeleteFiles(event => {
-        // 更新配置文件
-        ConfigHandler.handleCreateOrDelete(event)
+        // 文件路径
+        let fileName: string = ''
+        // 文件后缀
+        let postfix: string = ''
+        // 项目路径
+        let projectPath: string = ''
         // 处理文件删除
         event.files.forEach(uri => {
-            console.log(uri.fsPath);
-            let fileName = uri.fsPath
-            let postfix = path.extname(fileName)
-            if (postfix === '.ts' || postfix === '.js') {
+            // 获取文件名
+            fileName = uri.fsPath
+            // 获取文件后缀
+            postfix = path.extname(fileName)
+            // 若删除的文件是配置文件（有bug）
+            if (path.basename(fileName) === "annotation.config.json") {
+                // 获取项目路径
+                projectPath = dirname(uri.fsPath)
+                // 删除该项目下的配置文件
+                ConfigManager.addOrUpdateProjectConfig(projectPath)
+            }
+            // 若是ts或js文件则删除器对应的抽象语法树
+            else if (postfix === '.ts' || postfix === '.js') {
                 TsFileManager.removeSourceFile(fileName)
             }
         })
-
-
     });
 
     // 监听文件移动（重命名）事件
     vscode.workspace.onDidRenameFiles(event => {
-        ConfigHandler.handleRename(event)
         event.files.forEach(({ oldUri, newUri }) => {
-            // 获取老文件名和新文件名
+            // 新文件名
             const newFileName = basename(newUri.fsPath)
+            // 老文件名
             const oldFileName = basename(oldUri.fsPath)
-            let newFilePostfix = extname(newFileName)
-            // 若老文件以ts结尾 但新文件不以ts结尾则删除
-            if (newFilePostfix !== '.js' && newFilePostfix !== '.ts') {
-                TsFileManager.removeSourceFile(newUri.fsPath)
-            } else {
+            // 老文件后缀
+            const oldFilePostfix = extname(oldFileName)
+            // 新文件后缀
+            const newFilePostfix = extname(newFileName)
+            // 处理配置文件重命名
+            if ((oldFileName === 'annotation.config.json' && newFileName !== oldFileName) || newFileName === 'annotation.config.json') {
+                ConfigManager.addOrUpdateProjectConfig(dirname(oldUri.fsPath))
+            }
+            // 若是ts文件则处理
+            if (oldFilePostfix === '.ts' || oldFilePostfix === '.js') {
+                // 若新老文件名不同
                 if (newFileName !== oldFileName) {
-                    let oldSourceFile = TsFileManager.getSourceFile(oldUri.fsPath)
-                    if (oldSourceFile) {
-                        TsFileManager.addOrUpdateSourceFile(newUri.fsPath, oldSourceFile)
+                    // 后缀发生变化则删除
+                    if (newFilePostfix !== '.js' || newFileName !== '.ts') {
+                        TsFileManager.removeSourceFile(newUri.fsPath)
+                        // 仅仅名字发生变化则更新
+                    } else {
+                        let oldSourceFile = TsFileManager.getSourceFile(oldUri.fsPath)
+                        if (oldSourceFile) {
+                            console.log("a");
 
-                        TsFileManager.removeSourceFile(oldUri.fsPath)
+                            TsFileManager.addOrUpdateSourceFile(newUri.fsPath, oldSourceFile)
+                            TsFileManager.removeSourceFile(oldUri.fsPath)
+                        }
                     }
                 }
             }
-            // 若老文件以ts结尾 新文件也是，但是新文件和老文件名字不一样则更新
         });
 
     });
     vscode.workspace.onDidCreateFiles(event => {
         // 更新配置文件
-        ConfigHandler.handleCreateOrDelete(event)
+        let projectPath = ''
+        // 获取文件结尾
+        let change = event.files.some(uri => {
+            if (path.basename(uri.fsPath) === "annotation.config.json") {
+                projectPath = dirname(uri.fsPath)
+                return true
+            }
+        })
+        // 若配置文件删除则重新加载配置
+        if (change) {
+            // 重新加载配置
+            ConfigManager.addOrUpdateProjectConfig(projectPath)
+        }
     })
     vscode.workspace.onDidSaveTextDocument(event => {
-        ConfigHandler.handleSave(event)
+        // 获取文件路径
         let fileName = event.fileName
+        // 获取文件后缀
         let postfix = path.extname(fileName)
-        if (postfix === '.ts' || postfix === '.js') {
+        // 若是配置文件
+        if (basename(fileName) === "annotation.config.json") {
+            ConfigManager.addOrUpdateProjectConfig(dirname(event.fileName))
+        }
+        // 若是ts文件
+        else if (postfix === '.ts' || postfix === '.js') {
             // 重新解析
             let sourceFile = TsFileParser.parse(fileName)
             TsFileManager.addOrUpdateSourceFile(fileName, sourceFile)
@@ -155,6 +195,8 @@ export function activate(context: vscode.ExtensionContext) {
        } */
         // 保存更改到文件  
         sourceFile.saveSync();
+        ConfigManager.print()
+        TsFileManager.print()
     });
 
     context.subscriptions.push(disposable);

@@ -44,4 +44,10 @@ export class ConfigManager {
         // 返回配置
         return annotationConfig
     }
+
+    public static print() {
+        for (const [key, value] of this.projectConfigMap) {
+            console.log("configKey:" + key, "configValue" + value);
+        }
+    }
 }

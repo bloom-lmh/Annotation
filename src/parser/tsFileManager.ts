@@ -35,4 +35,10 @@ export class TsFileManager {
     public static removeSourceFile(fileName: string) {
         this.sourceFileMaps.delete(fileName)
     }
+
+    public static print() {
+        for (const [key, value] of this.sourceFileMaps) {
+            console.log("astKey:" + key);
+        }
+    }
 }

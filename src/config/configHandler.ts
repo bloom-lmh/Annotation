@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import path, { basename, dirname } from 'path';
 import { ConfigManager } from './configManager';
 
+/**
+ * @deprecated
+ */
 export class ConfigHandler {
     public static handleSave(event: vscode.TextDocument) {
         if (basename(event.fileName) === "annotation.config.json") {
