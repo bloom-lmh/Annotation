@@ -17,13 +17,6 @@ export class TsFileParser {
         return sourceFile
     }
 
-    public static parseFiles() {
-
-    }
-
-
-
-
     /**
      * 获取成员信息
      * @param sourceFile 解析后的源文件

@@ -7,7 +7,6 @@ import {
 } from './configType';
 import { WorkspaceUtil } from '../utils/workspaceUtil';
 import { ConfigManager } from './configManager';
-import { execFile } from 'child_process';
 /* export function defineConfig(config: AnnotationConfig): AnnotationConfig {
     return config
 } */
