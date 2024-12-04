@@ -10,7 +10,10 @@ Annotation参考了市面上热门的注释生成插件，如IEAD中Easy Javadoc
   - 如对类、方法、属性注释元素进行配置
   - 自定义翻译接口
 - 支持配置的迁移和复用，让你无论在什么设备上都可以使用自己习惯的注释生成方式
-
+## Annotation类图
+![alt text](https://s3.bmp.ovh/imgs/2024/12/04/ccc54c3dbece7a6f.png)
+## Annotation架构图
+![alt text](https://s3.bmp.ovh/imgs/2024/12/04/73496b02445480a8.png)
 # 起步
 ## 下载
 Annotation的使用非常简单，只需要在VSCODE插件市场上搜索annotation插件下载即可，真正的做到了开箱即用。
