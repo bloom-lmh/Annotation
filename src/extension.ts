@@ -80,9 +80,6 @@ export function activate(context: vscode.ExtensionContext) {
                     ConfigManager.addOrUpdateProjectConfig(dirname(oldUri.fsPath))
                 }
             }
-            /*   if ((oldFileName === 'annotation.config.json' && newFileName !== oldFileName) || newFileName === 'annotation.config.json') {
-                 
-              } */
             // 若是ts文件则处理
             if (oldFilePostfix === '.ts' || oldFilePostfix === '.js') {
                 // 若新老文件名不同
@@ -153,7 +150,6 @@ export function activate(context: vscode.ExtensionContext) {
         // 创建拾取器对象拾取光标所在单词和文件名以及行号
         const { fileName, wordText, lineNumber } = new ContextPicker(editor).pick()
         // 解析ts文件为语法树
-        //const sourceFile = TsFileParser.parse(fileName)
         const sourceFile = TsFileManager.getSourceFile(fileName)
         // 获文件解析失败提示信息
         if (!sourceFile) {
@@ -162,7 +158,6 @@ export function activate(context: vscode.ExtensionContext) {
         }
         // 获取单词对应的成员信息
         const memberDeclaration = TsFileUtil.getMemberInfoByName(sourceFile, wordText, lineNumber);
-        // const memberDeclaration = TsFileParser.getMemberInfoByName_v2(sourceFile, wordText);
         // 获取成员失败提示信息
         if (!memberDeclaration) {
             vscode.window.showErrorMessage("获取成员信息失败！");
@@ -177,8 +172,6 @@ export function activate(context: vscode.ExtensionContext) {
         }
         // 获取项目配置
         let annotationConfig = ConfigManager.getProjectConfig(projectPath)
-        // let annotationConfig = ConfigLoader.loadConfig(projectPath)
-
         // 获取用户配置失败提示信息
         if (!annotationConfig) {
             vscode.window.showErrorMessage("获取用户配置失败！");
@@ -205,8 +198,6 @@ export function activate(context: vscode.ExtensionContext) {
        } */
         // 保存更改到文件  
         sourceFile.saveSync();
-        ConfigManager.print()
-        TsFileManager.print()
     });
 
     context.subscriptions.push(disposable);

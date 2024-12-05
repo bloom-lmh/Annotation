@@ -7,15 +7,8 @@ import {
 } from './configType';
 import { WorkspaceUtil } from '../utils/workspaceUtil';
 import { ConfigManager } from './configManager';
-/* export function defineConfig(config: AnnotationConfig): AnnotationConfig {
-    return config
-} */
 
 export class ConfigLoader {
-    /**
-     * 全局配置
-     */
-    // public static globalConfig: GlobalAnnotationConfig
     /**
      * 定义配置
      */
@@ -73,8 +66,6 @@ export class ConfigLoader {
     public static loadProjectConfig(projectPath: string): AnnotationConfig {
         // 拼接文件路径
         const filePath = path.join(projectPath, 'annotation.config.json')
-        // 优先加载用户的ts配置文件
-        // 加载用户的js配置文件
         // 加载用户json格式的配置文件
         let annotationConfig: AnnotationConfig = {};
         if (existsSync(filePath)) {

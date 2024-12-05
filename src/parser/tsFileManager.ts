@@ -16,29 +16,15 @@ export class TsFileManager {
     public static addOrUpdateSourceFile(filename: string, sourceFile: SourceFile) {
         // 没有则添加
         this.sourceFileMaps.set(filename, sourceFile)
-        /* if (!this.sourceFileMaps.has(filename)) {
-
-        } */
     }
     /**
      * 获取ast语法树
      */
     public static getSourceFile(fileName: string): SourceFile | undefined {
-        /*  let sourceFile = this.sourceFileMaps.get(fileName)
-         if (!sourceFile) {
-             sourceFile = TsFileParser.parse(fileName)
-             this.addOrUpdateSourceFile(fileName, sourceFile)
-         } */
         return this.sourceFileMaps.get(fileName)
     }
 
     public static removeSourceFile(fileName: string) {
         this.sourceFileMaps.delete(fileName)
-    }
-
-    public static print() {
-        for (const [key, value] of this.sourceFileMaps) {
-            console.log("astKey:" + key);
-        }
     }
 }
